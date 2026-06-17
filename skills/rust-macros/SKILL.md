@@ -1,34 +1,36 @@
 ---
 name: rust-macros
-description: Rust 宏系统技能 — 涵盖声明宏（macro_rules!）、过程宏（derive、attribute、function-like）、宏设计模式、调试与测试。基于官方 library/core/src/macros/ 与 compiler/ 中的宏处理源码。当用户需要编写宏来减少重复代码、创建 DSL 或自定义派生时激活。
+description: Rust 宏系统技能 — 声明宏（macro_rules!：片段类型符、重复模式、TT muncher、递归）、过程宏（proc-macro crate：derive 宏、属性宏、函数式宏）、第三方工具（syn 解析、quote 生成）、宏调试与 hygiene。基于 The Book ch 19.6 与 Rust Reference（宏章节）。当用户需要减少重复代码、创建 DSL、实现自定义 derive 或理解宏展开时激活。
 ---
 
 # Rust 宏系统
 
-> 基于官方 `library/core/src/macros/mod.rs` 与 `compiler/` 中宏处理源码分析。
+> 基于 The Rust Programming Language ch 19.6 与 Rust Reference（Macros By Example & Procedural Macros）。
 
 ## Capability Boundaries
 
 ### ✅ 强项
-1. 声明宏（macro_rules!）— 模式匹配与代码替换
-2. 过程宏（proc_macro）— derive、attribute、function-like 三类
-3. 宏设计模式（递归、TT muncher、解析器组合）
-4. 宏调试（log_syntax!、trace_macros!）
-5. 辅助宏工具（paste、quote、syn）
+1. 声明宏（macro_rules!）全部片段类型符与重复模式
+2. TT muncher 模式（递归处理 Token Tree）
+3. 过程宏三类（derive、attribute、function-like）
+4. syn crate（DeriveInput/ItemFn/Type 等语法解析）
+5. quote crate（TokenStream 生成、#var 插值）
+6. 宏调试（trace_macros!、log_syntax!）
+7. 宏 hygiene 与 $crate 引用
 
 ### ⚠️ 前置要求
-1. 深入理解 Rust 语法
+1. 熟悉 Rust 语法（rust-1.93）
 
 ### ❌ 不适用范围
-1. Rust 基础语法 → 使用 `rust-core` 技能
-2. 派生宏的简单使用（如 #[derive(Debug)]）→ 使用 `rust-core` 技能
+1. 基础 derive 使用（如 `#[derive(Debug)]`）→ 使用 `rust-1.93` 技能
+2. 宏在 CLI/Web 项目中应用 → 对应领域技能
 
 ## 何时使用
 
+- "写一个 macro_rules!" / "声明宏怎么写"
+- "过程宏和声明宏的区别"
+- "自定义 derive 宏"
 - "减少重复代码"
-- "创建 DSL"
-- "实现自定义 derive"
-- "编写声明宏"
 
 ## Data Privacy
 
@@ -36,130 +38,163 @@ description: Rust 宏系统技能 — 涵盖声明宏（macro_rules!）、过程
 
 ---
 
-# Rust 宏系统参考
-
-## 声明宏（macro_rules!）
+## 一、声明宏（macro_rules!）
 
 ```rust
 // 基础模式
 macro_rules! my_vec {
-    // 匹配 empty
-    () => {
-        Vec::new()
-    };
-    // 匹配单个元素重复
+    // 匹配空
+    () => { Vec::new() };
+
+    // 匹配 `$elem; $n` — 重复
+    ($elem:expr; $n:expr) => {{
+        let mut v = Vec::with_capacity($n);
+        v.resize($n, $elem);
+        v
+    }};
+
+    // 匹配逗号分隔列表 — $()* 重复
     ($($x:expr),* $(,)?) => {{
         let mut v = Vec::new();
         $(v.push($x);)*
         v
     }};
-    // 匹配重复带分号
-    ($elem:expr; $n:expr) => {
-        vec![$elem; $n]
-    };
 }
 
 // 片段类型符
-// expr — 表达式
-// ident — 标识符
-// ty — 类型
-// pat — 模式
-// stmt — 语句
-// block — 代码块
-// item — 项
-// meta — 属性元数据
-// tt — token 树（最通用）
+// expr → 表达式       ident → 标识符     ty → 类型
+// pat → 模式         stmt → 语句       block → 代码块
+// item → 项          meta → 属性       tt → token 树（最通用）
+// lifetime → 生命周期  literal → 字面量
 
-// assert_eq!（来自标准库的模式）
+// 重复操作符
+// $()* → 零或多次    $()+ → 一次或多次  $()? → 零或一次
+
+// assert_eq! 模式（来自标准库）
 macro_rules! assert_eq {
     ($left:expr, $right:expr $(,)?) => {
         match (&$left, &$right) {
             (left_val, right_val) => {
                 if !(*left_val == *right_val) {
-                    let kind = $crate::panicking::AssertKind::Eq;
                     $crate::panicking::assert_failed(
-                        kind, &*left_val, &*right_val,
+                        $crate::panicking::AssertKind::Eq,
+                        &*left_val, &*right_val,
                         $crate::option::Option::None,
                     );
                 }
             }
         }
     };
+    ($left:expr, $right:expr, $($arg:tt)+) => { /* ... */ };
 }
 ```
 
-## 过程宏（proc_macro）
+## 二、TT Muncher 模式
 
 ```rust
-// 需要在单独的 proc-macro crate 中定义
-// Cargo.toml:
+// 递归解析 token 序列
+macro_rules! parse_args {
+    // 基本情况
+    () => { Vec::<String>::new() };
+
+    // 递归步骤：`--flag value, rest...`
+    (--$name:ident $val:expr $(, $($rest:tt)*)?) => {{
+        let mut v = parse_args!($($($rest)*)?);
+        v.push(format!("--{}={}", stringify!($name), $val));
+        v
+    }};
+}
+```
+
+## 三、过程宏
+
+```rust
+// Cargo.toml — 过程宏 crate 配置
 // [lib]
 // proc-macro = true
+//
+// [dependencies]
+// syn = { version = "2", features = ["full"] }
+// quote = "1"
+// proc-macro2 = "1"
 
-// derive 宏
 use proc_macro::TokenStream;
-
-#[proc_macro_derive(MyTrait)]
-pub fn my_derive(input: TokenStream) -> TokenStream {
-    // 使用 syn 解析输入
-    // 使用 quote 生成代码
-    input
-}
-
-// 属性宏
-#[proc_macro_attribute]
-pub fn route(attr: TokenStream, item: TokenStream) -> TokenStream {
-    item
-}
-
-// 函数式宏
-#[proc_macro]
-pub fn sql(input: TokenStream) -> TokenStream {
-    input
-}
-```
-
-## 常用工具 Crate
-
-```toml
-[dependencies]
-syn = { version = "2", features = ["full"] }   // 解析 Rust 语法
-quote = "1"                                      // 生成 Rust 代码
-proc-macro2 = "1"                                // proc_macro 替代品
-```
-
-```rust
 use syn::{parse_macro_input, DeriveInput, ItemFn};
 use quote::quote;
 
-#[proc_macro_derive(MyDebug)]
-pub fn my_debug(input: TokenStream) -> TokenStream {
+// 1. derive 宏
+#[proc_macro_derive(MyTrait)]
+pub fn my_derive(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
     let name = &input.ident;
-    
+
     let expanded = quote! {
-        impl std::fmt::Debug for #name {
-            fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                write!(f, stringify!(#name))
+        impl MyTrait for #name {
+            fn method(&self) {
+                println!("MyTrait for {}", stringify!(#name));
             }
         }
     };
-    
+    TokenStream::from(expanded)
+}
+
+// 2. 属性宏
+#[proc_macro_attribute]
+pub fn log_call(_attr: TokenStream, item: TokenStream) -> TokenStream {
+    let input = parse_macro_input!(item as ItemFn);
+    let name = &input.sig.ident;
+
+    let expanded = quote! {
+        fn #name() {
+            println!("Called: {}", stringify!(#name));
+            #input
+        }
+    };
+    TokenStream::from(expanded)
+}
+
+// 3. 函数式宏
+#[proc_macro]
+pub fn sql(input: TokenStream) -> TokenStream {
+    let sql_str = input.to_string();
+    let expanded = quote! {
+        format!("EXPLAIN {sql_str}")
+    };
     TokenStream::from(expanded)
 }
 ```
 
-## 宏调试
+## 四、宏调试与 Hygiene
 
 ```rust
-// 在 nightly 中启用
+// 启用宏跟踪（nightly）
 #![feature(trace_macros)]
-
-macro_rules! add { ($a:expr, $b:expr) => { $a + $b }; }
 
 fn main() {
     trace_macros!(true);
-    let x = add!(1, 2);
+    let v = vec![1, 2, 3];
     trace_macros!(false);
 }
+
+// $crate — 始终引用宏定义所在的 crate
+// 确保 macro 中使用 $crate:: 而非绝对路径
+macro_rules! make_error {
+    () => {
+        $crate::MyError::new()
+    };
+}
+
+// 辅助宏
+macro_rules! log_syntax {
+    // nightly 编译时打印展开结果
+    () => { /* compiler built-in */ };
+}
 ```
+
+## 官方参考
+
+- [The Book ch 19.6](https://doc.rust-lang.org/book/ch19-06-macros.html)
+- [Rust Reference — Macros By Example](https://doc.rust-lang.org/reference/macros-by-example.html)
+- [Rust Reference — Procedural Macros](https://doc.rust-lang.org/reference/procedural-macros.html)
+- [syn crate](https://docs.rs/syn/)
+- [quote crate](https://docs.rs/quote/)

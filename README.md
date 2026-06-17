@@ -2,7 +2,7 @@
 
 # rust-skills
 
-**Rust language skills — standard library, Cargo, async, testing, unsafe, web, embedded, macros**
+**Rust language skills — 1.93, concurrency, testing, Web, embedded, CLI, macros, code review**
 
 [![GitHub](https://img.shields.io/badge/github-full--statck--skills%2Frust-skills-green.svg)](https://github.com/full-statck-skills/rust-skills)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
@@ -20,7 +20,7 @@ English | [简体中文](./README.zh-CN.md)
 
 **Rust Skills** is a curated collection of Agent Skills for AI coding agents focused on the [Rust programming language](https://rust-lang.org) and its ecosystem, part of the [Full Stack Skills](https://github.com/partme-ai/full-stack-skills) ecosystem maintained by [PartMe.AI](https://github.com/partme-ai).
 
-This package includes **9 skills** organized into three layers: **Core Language & Tooling** (language, Cargo, testing), **Domain Libraries** (concurrency, unsafe, macros), and **Ecosystem** (web, embedded). Each skill is a self-contained `SKILL.md` file that AI agents load on-demand.
+This package includes **12 skills** organized into four layers: **Core Language**, **Project Engineering**, **Domain Specialized**, and **Quality & Style**. Each skill is a self-contained `SKILL.md` file that AI agents load on-demand.
 
 ## 📦 Install
 
@@ -30,27 +30,33 @@ npx skills add full-statck-skills/rust-skills
 
 Or install specific skills: `npx skills add full-statck-skills/rust-skills --skill <skill-name>`
 
-## 🎯 Skills (9) by Layer
+## 🎯 Skills (12) by Layer
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
-│              Layer 1: Core Language & Tooling                │
+│              Layer 1: Core Language                          │
 │                                                              │
-│  rust-core ──────── Primary skill, full language + std lib    │
-│  rust-cargo ─────── Cargo build system, packages, workspaces  │
-│  rust-testing ───── Testing, benches, doc-tests, coverage     │
+│  rust-1.93 ───────── Primary skill, full language + std lib   │
 ├──────────────────────────────────────────────────────────────┤
-│              Layer 2: Domain Libraries                       │
+│              Layer 2: Project Engineering                    │
 │                                                              │
-│  rust-concurrency  async/await, threads, sync primitives      │
-│  rust-unsafe ────── Unsafe Rust, FFI, raw pointers           │
-│  rust-macros ────── Declarative (macro_rules!) & proc macros  │
+│  rust-project-structure  Project scaffolding, modules, layout │
+│  rust-cargo-build ─────── Cargo.toml, deps, features, build   │
 ├──────────────────────────────────────────────────────────────┤
-│              Layer 3: Ecosystem & Platforms                   │
+│              Layer 3: Domain Specialized                     │
 │                                                              │
-│  rust-web ───────── Web frameworks (axum, actix, rocket)     │
-│  rust-embedded ──── Embedded Rust, no_std, HAL, RTIC         │
-│  rust-code-review ─ Code review for style & correctness       │
+│  Concurrency   rust-concurrency  Threads, async, sync prims  │
+│  Testing       rust-testing ───── Unit, integration, bench    │
+│  Unsafe + FFI  rust-unsafe-ffi ── Unsafe code, C interop     │
+│  Macros        rust-macros ────── macro_rules!, proc macros   │
+│  CLI           rust-cli ───────── CLI apps, clap, file I/O    │
+│  Web           rust-web ───────── axum, serde, databases      │
+│  Embedded      rust-embedded ──── no_std, HAL, Cortex-M      │
+├──────────────────────────────────────────────────────────────┤
+│              Layer 4: Quality & Style                        │
+│                                                              │
+│  rust-code-review  Code review for style & correctness        │
+│  rust-style-clippy Rustfmt, Clippy, naming conventions        │
 └──────────────────────────────────────────────────────────────┘
 ```
 
@@ -59,25 +65,27 @@ Or install specific skills: `npx skills add full-statck-skills/rust-skills --ski
 ```text
 rust-skills/
 ├── skills/
-│   ├── rust-core/              # Primary aggregate skill (language + std lib)
-│   │   ├── examples/           # Offline quick-start examples
-│   │   └── references/         # Language & std lib references
-│   ├── rust-cargo/             # Cargo build system specialization
-│   ├── rust-code-review/       # Code review skill
-│   ├── rust-concurrency/       # Async & threading
-│   ├── rust-testing/           # Testing & benchmarking
-│   ├── rust-unsafe/            # Unsafe Rust & FFI
-│   ├── rust-web/               # Web frameworks
-│   ├── rust-embedded/          # Embedded & no_std
-│   └── rust-macros/            # Macro system
-├── scripts/
+│   ├── rust-1.93/                   # Primary skill (1.93.1)
+│   │   ├── examples/                # Offline quick-start examples
+│   │   └── references/              # Language & std lib references
+│   ├── rust-project-structure/      # Modules & project layout
+│   ├── rust-cargo-build/            # Cargo build system
+│   ├── rust-concurrency/            # Concurrency & async
+│   ├── rust-testing/                # Testing & benchmarking
+│   ├── rust-unsafe-ffi/             # Unsafe Rust & FFI
+│   ├── rust-macros/                 # Macro system
+│   ├── rust-cli/                    # CLI application development
+│   ├── rust-web/                    # Web development
+│   ├── rust-embedded/               # Embedded & no_std
+│   ├── rust-code-review/            # Code review skill
+│   └── rust-style-clippy/           # Style guide & static analysis
 ├── README.md
 └── README.zh-CN.md
 ```
 
 ## 📖 Official Sources
 
-The `rust-core` main skill is grounded in these official documentation sources:
+The `rust-1.93` main skill is grounded in these official documentation sources:
 
 - [The Rust Programming Language (The Book)](https://doc.rust-lang.org/book/)
 - [Rust Standard Library API](https://doc.rust-lang.org/std/index.html)
@@ -91,6 +99,7 @@ The `rust-core` main skill is grounded in these official documentation sources:
 - [Clippy Book](https://doc.rust-lang.org/clippy/index.html)
 - [Rust Embedded Book](https://doc.rust-lang.org/embedded-book)
 - [Command Line Book](https://rust-cli.github.io/book/index.html)
+- [Async Book](https://rust-lang.github.io/async-book/)
 
 ## 🤖 Supported Agents
 

@@ -1,34 +1,36 @@
 ---
 name: rust-concurrency
-description: Rust 并发编程技能 — 涵盖 async/await、std::thread、std::sync（Mutex、RwLock、Barrier、Condvar、OnceLock、LazyLock）、std::sync::atomic、mpsc/mpmc 通道、Send/Sync、Tokio 生态。基于官方 std::sync 与 thread 模块源码分析。当用户需要编写多线程、异步 I/O 或并发代码时激活。
+description: Rust 并发编程技能 — 线程（thread::spawn、scoped threads）、同步原语（Mutex、RwLock、Barrier、Condvar、OnceLock、LazyLock）、原子操作（AtomicBool/I32/Usize、Ordering）、通道（mpsc）、async/await（Future、Tokio 运行时）、Send/Sync trait。基于 std::thread、std::sync、std::sync::atomic 与 Async Book。当用户需要多线程编程、异步 I/O 或使用 Tokio 时激活。
 ---
 
 # Rust 并发编程
 
-> 基于官方 `library/std/src/sync/` 与 `library/std/src/thread/` 模块源码分析。
+> 基于 Rust 标准库 `std::thread`、`std::sync`、`std::sync::atomic` 与 [Async Book](https://rust-lang.github.io/async-book/)。
 
 ## Capability Boundaries
 
 ### ✅ 强项
-1. OS 线程（std::thread::spawn、Builder、JoinHandle）
+1. OS 线程（thread::spawn、Builder、join、scoped threads、move 闭包）
 2. 同步原语（Mutex、RwLock、Barrier、Condvar、OnceLock、LazyLock）
-3. 原子操作（std::sync::atomic 所有原子类型）
-4. 通道通信（mpsc 多生产者单消费者、mpmc 多生产者多消费者）
-5. Send/Sync trait 系统
-6. async/await 基础
-7. 线程局部存储（thread_local!）
+3. 原子类型（AtomicBool/Isize/Usize、load/store/fetch_add/swap/compare_exchange、Ordering）
+4. 通道（mpsc：多生产者单消费者、Receiver、Sender）
+5. Send/Sync trait 系统（自动推导与手动实现）
+6. async/await 语法与 Future trait
+7. Tokio 运行时（tokio::main、tokio::spawn、select!、JoinSet）
+8. 异步 I/O 基础（tokio::fs、tokio::net、tokio::io）
 
 ### ⚠️ 前置要求
-1. 理解 Rust 所有权模型
+1. 理解 Rust 所有权模型（rust-1.93）
 
 ### ❌ 不适用范围
-1. Rust 基础语法 → 使用 `rust-core` 技能
+1. 不安全代码并发 → 使用 `rust-unsafe-ffi` 技能
+2. 基础所有权/借用 → 使用 `rust-1.93` 技能
 
 ## 何时使用
 
-- "用多线程处理数据"
-- "实现生产者-消费者模式"
-- "使用 async/await"
+- "多线程处理数据"
+- "async/await 怎么写"
+- "Tokio 运行时使用"
 - "线程间共享数据"
 - "避免数据竞争"
 
@@ -38,39 +40,38 @@ description: Rust 并发编程技能 — 涵盖 async/await、std::thread、std:
 
 ---
 
-# Rust 并发参考
-
-## 线程（std::thread）
+## 一、OS 线程
 
 ```rust
 use std::thread;
 
-// 基础线程
 let handle = thread::spawn(move || {
     println!("Hello from thread!");
 });
-
-// 等待线程完成
 handle.join().unwrap();
 
-// 配置线程
+// 带配置的线程
 let builder = thread::Builder::new()
     .name("worker".into())
     .stack_size(1024 * 1024);
-
 let handle = builder.spawn(move || { /* ... */ }).unwrap();
 
-// 获取当前线程
-let current = thread::current();
-println!("Thread name: {:?}", current.name());
+// scoped threads（1.63+）
+let mut v = vec![1, 2, 3];
+thread::scope(|s| {
+    s.spawn(|| {
+        v.push(4);  // 借用，不需 move
+    });
+});
+println!("{v:?}");  // v 仍可用
 ```
 
-## 同步原语（std::sync）
+## 二、同步原语
 
 ```rust
 use std::sync::{Arc, Mutex, RwLock, Barrier, OnceLock, LazyLock};
 
-// Mutex — 互斥锁
+// Mutex（互斥锁）
 let counter = Arc::new(Mutex::new(0));
 let mut handles = vec![];
 
@@ -82,70 +83,100 @@ for _ in 0..10 {
     }));
 }
 
-// RwLock — 读写锁（多读单写）
+// RwLock（读写锁）
 let data = Arc::new(RwLock::new(vec![1, 2, 3]));
-{
-    let read = data.read().unwrap();
-    println!("len: {}", read.len());
-}
-{
-    let mut write = data.write().unwrap();
-    write.push(4);
-}
+let read = data.read().unwrap();
+let write = data.write().unwrap();
 
-// Barrier — 屏障（同步多个线程）
-let barrier = Arc::new(Barrier::new(5));
-
-// OnceLock — 懒初始化（线程安全）
+// OnceLock（线程安全懒初始化）
 static CONFIG: OnceLock<String> = OnceLock::new();
 let config = CONFIG.get_or_init(|| load_config());
 
-// LazyLock — 惰性初始化
-static CACHE: LazyLock<HashMap<String, Data>> = LazyLock::new(|| {
-    HashMap::new()
-});
+// LazyLock
+static CACHE: LazyLock<HashMap<String, Data>> = LazyLock::new(HashMap::new);
 ```
 
-## 通道（mpsc、mpmc）
+## 三、原子操作
+
+```rust
+use std::sync::atomic::{
+    AtomicBool, AtomicU64, Ordering
+};
+
+static COUNTER: AtomicU64 = AtomicU64::new(0);
+COUNTER.fetch_add(1, Ordering::SeqCst);
+
+static READY: AtomicBool = AtomicBool::new(false);
+READY.store(true, Ordering::Release);
+let ready = READY.load(Ordering::Acquire);
+
+// Ordering 级别
+// Relaxed — 无顺序保证（仅原子性）
+// Release — 写入可见
+// Acquire — 读取可见
+// AcqRel — 读+写
+// SeqCst — 全局顺序（最强，默认）
+```
+
+## 四、通道
 
 ```rust
 use std::sync::mpsc;
 
-// 多生产者，单消费者
 let (tx, rx) = mpsc::channel();
-
 thread::spawn(move || {
-    tx.send(42).unwrap();
+    tx.send(1).unwrap();
+    tx.send(2).unwrap();
 });
+for received in rx {
+    println!("Got: {received}");
+}
 
-assert_eq!(rx.recv().unwrap(), 42);
+// 多生产者
+let (tx, rx) = mpsc::channel();
+let tx1 = tx.clone();
 ```
 
-## 原子操作
+## 五、async/await
 
 ```rust
-use std::sync::atomic::{
-    AtomicU64, AtomicBool, Ordering
-};
+use tokio::time;
 
-static COUNTER: AtomicU64 = AtomicU64::new(0);
+async fn do_work(id: u32) -> &'static str {
+    time::sleep(time::Duration::from_secs(1)).await;
+    println!("Task {id} done");
+    "ok"
+}
 
-// 原子递增
-let prev = COUNTER.fetch_add(1, Ordering::SeqCst);
+#[tokio::main]
+async fn main() {
+    // 并发执行
+    let (r1, r2) = tokio::join!(do_work(1), do_work(2));
 
-// 原子交换（可见于其他线程的标志位）
-static READY: AtomicBool = AtomicBool::new(false);
-READY.store(true, Ordering::Release);
-let is_ready = READY.load(Ordering::Acquire);
+    // select!
+    tokio::select! {
+        result = do_work(1) => println!("task1: {result}"),
+        result = do_work(2) => println!("task2: {result}"),
+    }
+
+    // tokio::spawn
+    let handle = tokio::spawn(do_work(3));
+    handle.await.unwrap();
+}
 ```
 
-## Send / Sync
+## 六、Send / Sync
 
 ```rust
-// Send: 类型所有权可跨线程转移
-// Sync: 类型引用 &T 可跨线程共享
+// Send: T 的所有权可跨线程转移
+// Sync: &T 可跨线程共享引用
 
-// 编译器自动推导，但可手动实现（需要 unsafe）
+// Send + Sync 类型：Arc<Mutex<T>>、i32、&str
+// !Send 类型：Rc<T>、*const T
+// !Sync 类型：RefCell<T>、Cell<T>
+
+// 手动实现（需 unsafe）
+struct MyType(*const u8);
 unsafe impl Send for MyType {}
 unsafe impl Sync for MyType {}
 ```
@@ -155,3 +186,5 @@ unsafe impl Sync for MyType {}
 - [std::thread](https://doc.rust-lang.org/std/thread/)
 - [std::sync](https://doc.rust-lang.org/std/sync/)
 - [std::sync::atomic](https://doc.rust-lang.org/std/sync/atomic/)
+- [Async Book](https://rust-lang.github.io/async-book/)
+- [Tokio Guide](https://tokio.rs/tokio/tutorial)

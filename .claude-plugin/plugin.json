@@ -10,14 +10,17 @@
   "repository": "https://github.com/full-statck-skills/rust-skills",
   "source": "./",
   "skills": [
-    "./skills/rust-core",
-    "./skills/rust-cargo",
-    "./skills/rust-code-review",
+    "./skills/rust-1.93",
+    "./skills/rust-project-structure",
+    "./skills/rust-cargo-build",
     "./skills/rust-concurrency",
     "./skills/rust-testing",
-    "./skills/rust-unsafe",
+    "./skills/rust-unsafe-ffi",
+    "./skills/rust-macros",
+    "./skills/rust-cli",
     "./skills/rust-web",
     "./skills/rust-embedded",
-    "./skills/rust-macros"
+    "./skills/rust-code-review",
+    "./skills/rust-style-clippy"
   ]
 }

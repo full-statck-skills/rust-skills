@@ -1,37 +1,39 @@
 ---
 name: rust-testing
-description: Rust 测试与质量保障技能 — 涵盖 unit tests、integration tests、doc tests、benchmarks、coverage、proptest、mock 等。基于官方 library/ 中 test 子系统与 community best practices。当用户需要编写测试、进行基准测试或保证代码质量时激活。
+description: Rust 测试与基准测试技能 — 单元测试（#[test]、#[cfg(test)]）、断言宏、测试属性（#[should_panic]、#[ignore]）、集成测试（tests/）、文档测试（doctest）、cargo test 运行器、基准测试（#[bench]、cargo bench）、代码覆盖率。基于 The Book ch 11 与 Rustdoc Book。当用户需要编写测试、运行基准测试或保证代码质量时激活。
 ---
 
-# Rust 测试与质量保障
+# Rust 测试与基准测试
 
-> 基于 Rust 标准库测试框架与社区最佳实践。
+> 基于 The Rust Programming Language ch 11 与 Rustdoc Book。
 
 ## Capability Boundaries
 
 ### ✅ 强项
-1. 单元测试（#[test]、子模块测试）
-2. 文档测试（/// 中的代码块）
-3. 集成测试（tests/ 目录）
-4. 基准测试（#[bench]、cargo bench）
-5. 测试属性（#[should_panic]、#[ignore]）
-6. 测试组织（测试模块、测试辅助函数）
-7. 代码覆盖率（cargo-llvm-cov、tarpaulin）
-8. 属性测试（proptest、quickcheck）
-9. mock 对象（mockall、trait mocking）
+1. 单元测试（#[test]、测试模块 `#[cfg(test)]` 组织）
+2. 断言宏（assert!、assert_eq!、assert_ne!、debug_assert!）
+3. 测试属性（#[should_panic]、#[ignore]、#[cfg(test)]）
+4. 集成测试（tests/ 目录与共享模块）
+5. 文档测试（```rust 代码块、# 隐藏行、should_panic、no_run、ignore）
+6. cargo test 运行器（过滤、--nocapture、--test-threads、--include-ignored）
+7. 基准测试（#[bench]、cargo bench、Bencher、criterion）
+8. 代码覆盖率（cargo-llvm-cov 的使用）
 
 ### ⚠️ 前置要求
-1. 理解 Rust 模块系统
+1. 理解 Rust 模块系统（rust-project-structure）
 
 ### ❌ 不适用范围
-1. Rust 基础语法 → 使用 `rust-core` 技能
+1. 属性测试（proptest）→ 暂不涉及
+2. Mock 对象 → 暂不涉及
+3. Rust 语法基础 → 使用 `rust-1.93` 技能
 
 ## 何时使用
 
-- "帮我写单元测试"
-- "运行测试/基准测试"
+- "写单元测试"
+- "集成测试放哪里"
+- "文档测试怎么写"
+- "性能基准测试"
 - "检查代码覆盖率"
-- "编写文档中的示例代码"
 
 ## Data Privacy
 
@@ -39,102 +41,147 @@ description: Rust 测试与质量保障技能 — 涵盖 unit tests、integratio
 
 ---
 
-# Rust 测试参考
-
-## 单元测试
+## 一、单元测试
 
 ```rust
-// 在 src/lib.rs 或 src/foo.rs 文件中
+// src/lib.rs
+pub fn add(a: i32, b: i32) -> i32 { a + b }
+pub fn divide(a: i32, b: i32) -> i32 {
+    if b == 0 { panic!("divide by zero"); }
+    a / b
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
-    fn test_addition() {
+    fn test_add() {
         assert_eq!(add(2, 2), 4);
     }
 
     #[test]
-    fn test_failure() {
-        assert!(true, "this should pass");
+    fn test_add_negative() {
+        assert_eq!(add(-1, 1), 0, "addition with negative");
     }
 
     #[test]
     #[should_panic(expected = "divide by zero")]
-    fn test_panic() {
+    fn test_divide_by_zero() {
         divide(1, 0);
     }
 
     #[test]
-    #[ignore = "not implemented yet"]
-    fn test_future() { /* TODO */ }
+    #[ignore = "not implemented"]
+    fn test_future() { unimplemented!() }
 }
 ```
 
-## 文档测试（doctest）
+## 二、集成测试
 
-```rust
-/// 将两个数相加。
-///
-/// ```
-/// let result = my_crate::add(2, 3);
-/// assert_eq!(result, 5);
-/// ```
-///
-/// ```rust,should_panic
-/// my_crate::divide(1, 0);
-/// ```
-pub fn add(a: i32, b: i32) -> i32 {
-    a + b
-}
+```text
+my-project/
+├── Cargo.toml
+├── src/lib.rs
+└── tests/
+    ├── common/          # 测试共享模块
+    │   └── mod.rs
+    ├── integration_test.rs
+    └── api_test.rs
 ```
 
-## 集成测试
-
 ```rust
-// tests/my_test.rs — 放在项目根目录的 tests/ 文件夹
+// tests/integration_test.rs — 每个文件是独立 crate
 use my_project::add;
 
 #[test]
 fn integration_test() {
     assert_eq!(add(1, 2), 3);
 }
+
+// tests/common/mod.rs — 共享辅助函数
+pub fn setup() { /* ... */ }
 ```
 
-## 测试命令
+## 三、文档测试（doctest）
+
+```rust
+/// 将两个数相加。
+///
+/// ```
+/// use my_crate::add;
+/// assert_eq!(add(2, 3), 5);
+/// ```
+///
+/// ```rust,should_panic
+/// my_crate::divide(1, 0);
+/// ```
+///
+/// ```rust,no_run
+/// // 编译但不运行
+/// loop {}
+/// ```
+pub fn add(a: i32, b: i32) -> i32 { a + b }
+```
+
+## 四、cargo test 命令
 
 ```bash
 cargo test                    # 运行所有测试
 cargo test test_name          # 按名称过滤
 cargo test -- --nocapture     # 显示 println 输出
-cargo test -- --test-threads=1 # 单线程运行
-cargo test -- --ignored       # 运行被忽略的测试
+cargo test -- --test-threads=1 # 单线程
+cargo test -- --skip test_name # 跳过特定测试
+cargo test -- --ignored       # 只运行 #[ignore] 测试
+cargo test -- --include-ignored # 包含忽略的
 cargo test --doc              # 只运行文档测试
-cargo bench                   # 运行基准测试
+cargo test -p my-crate        # 特定包
 ```
 
-## 基准测试
+## 五、基准测试
 
 ```rust
+// nightly 内置（需 #![feature(test)]）
 #![feature(test)]
 extern crate test;
 
 #[cfg(test)]
 mod benches {
     use test::Bencher;
+    use super::*;
 
     #[bench]
     fn bench_add(b: &mut Bencher) {
         b.iter(|| add(1, 2));
     }
 }
+
+// 稳定版使用 criterion
+// [dev-dependencies] criterion = { version = "0.5", features = ["html_reports"] }
+use criterion::{black_box, Criterion};
+
+fn bench_add(c: &mut Criterion) {
+    c.bench_function("add", |b| b.iter(|| add(black_box(1), black_box(2))));
+}
+criterion_group!(benches, bench_add);
+criterion_main!(benches);
 ```
 
-## 代码覆盖率
+## 六、代码覆盖率
 
 ```bash
-# 使用 cargo-llvm-cov
+# 安装
 cargo install cargo-llvm-cov
-cargo llvm-cov               # 运行并报告
-cargo llvm-cov --open        # 生成 HTML 报告
+
+# 使用
+cargo llvm-cov                   # 运行并报告
+cargo llvm-cov --open            # 生成 HTML 报告
+cargo llvm-cov --lcov --output-path lcov.info  # LCOV 格式
 ```
+
+## 官方参考
+
+- [The Book ch 11](https://doc.rust-lang.org/book/ch11-00-testing.html)
+- [Rustdoc Book — doctest](https://doc.rust-lang.org/rustdoc/write-documentation/documentation-tests.html)
+- [cargo test](https://doc.rust-lang.org/cargo/commands/cargo-test.html)
+- [criterion.rs](https://docs.rs/criterion/)

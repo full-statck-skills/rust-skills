@@ -1,619 +1,606 @@
 ---
 name: rust-1.93
-description: Rust 1.93 编程语言聚合主技能 — 涵盖全部语法（变量、类型、函数、控制流、模式匹配）、所有权与生命周期、结构体与枚举、泛型与 trait 系统、集合与迭代器、错误处理、智能指针、闭包、模块系统、测试基础、以及标准库核心类型（Vec、String、HashMap、Option、Result、Box、Rc、Arc、Cell、RefCell、Path）。从第一性原理出发，基于官方 rust-lang/rust 源码分析。当用户需要进行任何 Rust 编程时自动激活，覆盖语言基础到标准库的全部核心知识。
+description: Up-to-date Rust 1.93.1 language and standard library skill. Use when writing, reviewing, debugging, or migrating Rust code, working with std modules, ownership/lifetimes, traits/generics, collections, error handling, smart pointers, closures, iterators, modules, testing, and the standard library (Vec, String, HashMap, Option, Result, Box, Rc, Arc, Cell, RefCell, Path, I/O). Based on official rust-lang/rust source analysis.
 ---
 
-# Rust 1.93 核心语言参考
+# Rust Language Reference (v1.93.1)
 
-> Rust 编程语言聚合主技能。基于 Rust 1.93.1 官方源码（rust-lang/rust 仓库：`library/` 与 `compiler/`）的系统性分析。
+> Rust programming language aggregate primary skill. Based on the official `rust-lang/rust` source code (`library/` and `compiler/`) — 11,516 `.rs` files across the standard library and compiler.
 
 ## Capability Boundaries
 
-### ✅ 强项
-1. 变量与数据类型（标量/复合类型、类型推断、类型转换、const/static、Shadowing）
-2. 控制流（if/else、loop/while/for、break/continue/label、match/if let/while let）
-3. 函数与闭包（定义、参数、返回值、闭包捕获 Fn/FnMut/FnOnce）
-4. 所有权、借用、生命周期（ownership rules、&T/&mut T、slice、'a lifetime、elision、'static）
-5. 结构体、枚举、模式匹配（struct/tuple struct/unit struct、enum with data、深度 match 解构）
-6. 泛型与 trait（generic types/functions、trait definition、trait bound、impl/dyn Trait、associated types、super trait、derive、orphan rule）
-7. 集合与迭代器（Vec、String、HashMap、HashSet、Iterator trait、适配器 map/filter/fold/collect）
-8. 错误处理（panic、Result/Option、? 运算符、combinator、自定义错误、anyhow/thiserror）
-9. 智能指针（Box、Rc、Arc、Cell、RefCell、Deref/Drop、OnceCell）
-10. 模块与使用（mod、pub、use、路径 crate::/self::/super::、re-export、外部 crate）
-11. 测试基础（#[test]、assert!/assert_eq!、#[should_panic]、#[cfg(test)] 模式）
-12. 标准库常用模块（std::io、std::fs、std::path、std::time、std::env、std::process、std::net）
-13. 属性（#[derive]、#[cfg]、#[repr]、#[must_use]、#[allow/deny]）
+### ✅ Strong Suits
+1. Variables & data types — scalars, compounds, type inference, const/static, shadowing
+2. Control flow — if/else, loop/while/for, break/continue/label, match/if let/while let/let else
+3. Functions & closures — definitions, parameters, return values, closure captures (Fn/FnMut/FnOnce)
+4. Ownership, borrowing, lifetimes — ownership rules, &T/&mut T, slices, 'a lifetime elision, 'static
+5. Structs, enums, pattern matching — struct/tuple struct/unit struct, enum with data, deep match destructuring
+6. Generics & traits — generic types/functions, trait definition/bounds, impl/dyn Trait, associated types, supertrait, derive, orphan rule
+7. Collections & iterators — Vec, String, HashMap, HashSet, Iterator trait, adapters (map/filter/fold/collect)
+8. Error handling — panic, Result/Option, ? operator, combinators, custom errors, anyhow/thiserror
+9. Smart pointers — Box, Rc, Arc, Cell, RefCell, Deref/Drop, OnceCell, LazyCell
+10. Modules & visibility — mod, pub, use, crate::/self::/super:: paths, re-export, external crates
+11. Testing basics — #[test], assert!/assert_eq!, #[should_panic], #[cfg(test)]
+12. Common std library modules — std::io, std::fs, std::path, std::time, std::env, std::process, std::net
+13. Attributes — #[derive], #[cfg], #[repr], #[must_use], #[allow/deny]
+14. Formatting — format string syntax, Display/Debug, pretty-printing {:#?}
 
-### ⚠️ 前置要求
-1. 确认 Rust 工具链（`rustc --version` ≥ 1.93.0）
-2. 确认 Cargo 可用（`cargo --version`）
+### ⚠️ Requirements
+1. Verify Rust toolchain (`rustc --version` ≥ 1.93.0)
+2. Verify Cargo available (`cargo --version`)
 
-### ❌ 不适用范围（按领域分流）
-1. 项目脚手架与模块深度 → 使用 `rust-project-structure` 技能
-2. Cargo 构建配置与依赖管理 → 使用 `rust-cargo-build` 技能
-3. 并发/异步编程深度 → 使用 `rust-concurrency` 技能
-4. 测试与基准测试深度 → 使用 `rust-testing` 技能
-5. Unsafe Rust 与 FFI → 使用 `rust-unsafe-ffi` 技能
-6. 宏系统 → 使用 `rust-macros` 技能
-7. CLI 应用开发 → 使用 `rust-cli` 技能
-8. Web 开发 → 使用 `rust-web` 技能
-9. 嵌入式开发 → 使用 `rust-embedded` 技能
+### ❌ Out of Scope (with alternatives)
+1. Project scaffolding & modules depth → use `rust-project-structure`
+2. Cargo build configuration & dependency management → use `rust-cargo-build`
+3. Concurrency & async programming depth → use `rust-concurrency`
+4. Testing & benchmarking depth → use `rust-testing`
+5. Unsafe Rust & FFI → use `rust-unsafe-ffi`
+6. Macro system → use `rust-macros`
+7. CLI application development → use `rust-cli`
+8. Web development (axum, serde, databases) → use `rust-web`
+9. Embedded & no_std development → use `rust-embedded`
+10. Code review & style → use `rust-code-review` / `rust-style-clippy`
 
-## 何时使用
+## When to use this skill
 
-- "用 Rust 写一个..."
-- "Rust 的 X 语法是什么"
-- "这个 Rust 代码怎么写"
-- "标准库的 Y 怎么用"
+Use this skill when the user needs to write, review, debug, or migrate Rust 1.93 code, or when working with standard library types, ownership/lifetimes, trait systems, collections, error handling, smart pointers, closures, iterators, module systems, testing, or common std lib modules.
 
 ## Data Privacy
 
-本技能不收集、存储或传输任何用户数据。
+This skill does not collect, store, or transmit any user data. All code examples are for local development reference only.
 
----
+## Official Positioning
 
-## 一、变量与数据类型
+From the official Rust docs, Rust is a systems programming language focused on **safety, speed, and concurrency**:
 
-### 1.1 变量绑定
+- **Memory safety without GC** — ownership and borrowing enforced at compile time
+- **Zero-cost abstractions** — high-level constructs → efficient machine code
+- **Fearless concurrency** — type system prevents data races at compile time
+- **Practical tooling** — Cargo, rustfmt, Clippy, rustdoc, rust-analyzer
+- **Expressive type system** — algebraic data types, pattern matching, generics, traits
 
-```rust
-let x = 5;                // 不可变绑定
-let mut y = 10;           // 可变绑定
-y += 5;
+### Primary official sources
+- [The Rust Programming Language (The Book)](https://doc.rust-lang.org/book/)
+- [Rust Standard Library API](https://doc.rust-lang.org/std/index.html)
+- [Rust Reference](https://doc.rust-lang.org/reference/index.html)
+- [Rust by Example](https://doc.rust-lang.org/rust-by-example/)
+- [Cargo Book](https://doc.rust-lang.org/cargo/index.html)
+- [Rust RFCs](https://rust-lang.github.io/rfcs/)
+- [Rust Edition Guide](https://doc.rust-lang.org/edition-guide/)
 
-const MAX_POINTS: u32 = 100_000;  // 编译期常量
-static APP_NAME: &str = "myapp";  // 静态变量
+## Quick Start
 
-// 类型推断
-let guess: u32 = "42".parse().expect("Not a number!");
-
-// Shadowing（遮蔽）
-let x = 5;
-let x = x + 1;            // 新的 x 遮蔽旧的
-
-// 类型别名
-type Kilometers = i32;
+**Example invocations:**
+```
+Write a Rust function that reads a CSV file and returns Vec<Record>
+Review this Rust code for lifetime issues
+Use HashMap with a custom key type
+Implement the Iterator trait for a custom collection
+Handle errors properly with ? and custom error types
+Format this struct with Display and Debug traits
 ```
 
-### 1.2 标量类型
+## Critical: How to use this skill
+
+1. **Confirm the version first** — Run `rustc --version`; this skill targets Rust 1.93.1
+2. **Start here** for language fundamentals, std library types, basic I/O, testing, error handling
+3. **Load references/files** for detailed module guidance (see Standard Library References section)
+4. **Load examples/files** for copyable snippets (see Offline Examples section)
+5. **Switch to domain skills** for specialized work (concurrency, unsafe, macros, CLI, Web, embedded)
+
+## Critical: What's New in Rust 1.93
+
+Rust 1.93 (February 2026) stabilises these notable features:
+
+### New stable features
+- **`offset_of!`** — Compute struct field offsets at compile time: `offset_of!(MyStruct, field)`
+- **`LazyCell`** and **`LazyLock`** — Lazy initialization wrappers (previously unstable)
+- **`derive_const`** — Support for `const` implementations via derive
+- **`iter_next_chunk`** — `Iterator::next_chunk::<N>()` gets fixed-size arrays
+- **`associated_type_defaults`** — Default types for associated types
+- **`const_precise_live_drops`** — More precise const fn drop tracking
+
+### Breaking changes
+- **`unsafe_op_in_unsafe_fn` is now a hard error** — All unsafe operations in `unsafe fn` must be in explicit `unsafe { }` blocks
+- **Edition 2024 is now stable** — Default for new projects; includes improved `impl Trait` capture rules
+
+## Critical: The Rust Book Coverage Map
+
+| Book Chapter | Coverage Here | Domain Skill |
+|-------------|--------------|-------------|
+| ch 1-2: Getting Started / Guessing Game | ✅ Quick Start | - |
+| ch 3: Common Programming Concepts | ✅ Variables, types, functions, control flow | - |
+| ch 4: Ownership | ✅ Ownership, borrowing, slices | - |
+| ch 5: Structs | ✅ Structs, methods, associated functions | - |
+| ch 6: Enums & Pattern Matching | ✅ Enum, match, if let, while let | - |
+| ch 7: Modules | ✅ Basics | `rust-project-structure` |
+| ch 8: Common Collections | ✅ Vec, String, HashMap | - |
+| ch 9: Error Handling | ✅ Result, panic, ?, custom errors | - |
+| ch 10: Generics, Traits, Lifetimes | ✅ Generics, traits, lifetimes | - |
+| ch 11: Testing | ✅ Basics | `rust-testing` |
+| ch 12: I/O Project | ✅ File I/O basics | `rust-cli` |
+| ch 13: Functional Features | ✅ Closures, iterators | - |
+| ch 14: Cargo & Crates.io | ✅ Basics | `rust-cargo-build` |
+| ch 15: Smart Pointers | ✅ Box, Rc, Arc, Cell, RefCell | - |
+| ch 16: Concurrency | ❌ Basics only | `rust-concurrency` |
+| ch 17: OOP Features | ✅ Trait objects | - |
+| ch 18: Patterns & Matching | ✅ Pattern syntax | - |
+| ch 19: Advanced Features | ❌ | `rust-unsafe-ffi`, `rust-macros` |
+| ch 20: Web Server | ❌ | `rust-web`, `rust-concurrency` |
+
+## Critical: Standard Library Coverage Map
+
+### Core (no_std, always available)
+| Module | Key Types / Traits |
+|--------|-------------------|
+| `core::option` | `Option<T>` |
+| `core::result` | `Result<T, E>` |
+| `core::iter` | `Iterator`, `IntoIterator`, `FromIterator` |
+| `core::clone` | `Clone` |
+| `core::cmp` | `PartialEq`, `Eq`, `PartialOrd`, `Ord`, `Ordering` |
+| `core::ops` | `Deref`, `Drop`, `Add`, `Index`, `Range`, `ControlFlow`, `Try` |
+| `core::fmt` | `Display`, `Debug`, `Formatter`, `write!` |
+| `core::convert` | `From`, `Into`, `TryFrom`, `TryInto`, `AsRef`, `AsRef` |
+| `core::mem` | `size_of`, `align_of`, `replace`, `swap`, `MaybeUninit`, `ManuallyDrop` |
+| `core::cell` | `Cell`, `RefCell`, `OnceCell`, `LazyCell` |
+| `core::marker` | `Copy`, `Send`, `Sync`, `Sized`, `PhantomData` |
+| `core::ptr` | `NonNull`, `null`, `addr_of!`, `addr_of_mut!` |
+| `core::slice` | `[T]` methods: `sort`, `binary_search`, `split`, `windows` |
+| `core::str` | `str` methods: `trim`, `contains`, `replace`, `split` |
+| `core::hash` | `Hash`, `Hasher`, `BuildHasher` |
+| `core::future` | `Future`, `IntoFuture` |
+| `core::pin` | `Pin`, `Pin<&mut T>` |
+
+### Alloc (requires allocator)
+| Module | Key Types / Traits |
+|--------|-------------------|
+| `alloc::boxed` | `Box<T>`, `Box<[T]>` |
+| `alloc::rc` | `Rc<T>`, `Weak<T>` |
+| `alloc::sync` | `Arc<T>`, `Weak<T>` |
+| `alloc::vec` | `Vec<T>` |
+| `alloc::string` | `String` |
+| `alloc::collections` | `VecDeque`, `LinkedList`, `BinaryHeap`, `BTreeMap`, `BTreeSet` |
+
+### Std (full, platform-dependent)
+| Module | Key Types / Functions |
+|--------|----------------------|
+| `std::io` | `Read`, `Write`, `BufRead`, `BufReader`, `BufWriter`, `Cursor`, `stdin`, `stdout`, `stderr` |
+| `std::fs` | `File`, `read_to_string`, `read_dir`, `metadata`, `create_dir`, `remove_dir_all` |
+| `std::path` | `Path`, `PathBuf` |
+| `std::net` | `TcpListener`, `TcpStream`, `UdpSocket`, `IpAddr`, `SocketAddr` |
+| `std::time` | `Duration`, `Instant`, `SystemTime` |
+| `std::env` | `args`, `var`, `current_dir`, `temp_dir`, `home_dir` |
+| `std::process` | `Command`, `ExitCode`, `Stdio` |
+| `std::thread` | `spawn`, `Builder`, `JoinHandle`, `scope`, `sleep` |
+| `std::sync` | `Mutex`, `RwLock`, `Barrier`, `Condvar`, `OnceLock`, `LazyLock`, `mpsc` |
+| `std::sync::atomic` | `AtomicBool`, `AtomicI32`, `AtomicUsize`, `Ordering` |
+| `std::ffi` | `OsStr`, `OsString`, `CStr`, `CString` |
+| `std::error` | `Error` trait |
+| `std::collections` | `HashMap`, `HashSet` (re-exported from alloc) |
+
+## Language Reference (Essential Patterns)
+
+### Variables & Data Types
 
 ```rust
-// 整数：i8, i16, i32, i64, i128, u8, u16, u32, u64, u128, isize, usize
-let a: i8 = -128;
-let b: u32 = 42;
-// 字面量：0x1A（十六进制）、0o27（八进制）、0b1100（二进制）、b'A'（字节）
+let x = 5;                          // immutable
+let mut y = 10;                     // mutable
+const MAX: u32 = 100_000;           // compile-time constant
+static APP: &str = "myapp";         // static variable
 
-// 浮点：f32, f64
-let pi = 3.14159;  // 默认 f64
+// Scalar types — i8-u128, f32-f64, bool, char
+let i: i32 = -42;
+let pi: f64 = std::f64::consts::PI;
+let flag: bool = true;
+let c: char = '🦀';                 // 4-byte Unicode
 
-// 布尔
-let t: bool = true;
-
-// 字符（4 字节 Unicode）
-let c: char = '🦀';
-```
-
-### 1.3 复合类型
-
-```rust
-// 元组（Tuple）
+// Compound types — tuple, array, slice
 let tup: (i32, f64, u8) = (500, 6.4, 1);
-let (x, y, z) = tup;   // 解构
-let first = tup.0;      // 索引访问
+let (x, _, z) = tup;                // destructure, ignore middle
 
-// 数组（Array — 固定长度，栈上）
 let arr: [i32; 3] = [1, 2, 3];
-let first = arr[0];
+let first: &i32 = &arr[0];          // index (panics if OOB)
+let first_safe: Option<&i32> = arr.get(0);  // safe index
 
-// 切片（Slice — 动态大小视图）
-let slice: &[i32] = &arr[1..3];
-let s: &str = "hello";  // 字符串切片
+let slice: &[i32] = &arr[0..2];     // view into array
+let s: &str = "hello world";        // string slice
+let hello = &s[0..5];               // caution: Unicode boundaries
 ```
 
-## 二、函数与控制流
-
-### 2.1 函数定义
+### Functions & Control Flow
 
 ```rust
-fn add(x: i32, y: i32) -> i32 {
-    x + y                // 表达式（无分号）作为返回值
-}
-
+fn add(x: i32, y: i32) -> i32 { x + y }   // last expression = return
 fn greet(name: &str) -> String {
-    format!("Hello, {name}!")  // 或 return format!(...)
+    format!("Hello, {name}!")
 }
+fn never_returns() -> ! { panic!("never"); }
 
-// 发散函数（never type）
-fn never_returns() -> ! {
-    panic!("this function never returns");
-}
-```
-
-### 2.2 控制流
-
-```rust
-// if/else（表达式）
+// if is an expression
 let number = if condition { 5 } else { 6 };
 
-// 循环
-loop {
-    break;                // break 可带值：break 42;
+// loop with break value
+let result = loop { break 42; };
+'outer: for i in 0..10 {
+    for j in 0..10 {
+        if i + j == 15 { break 'outer; }
+    }
 }
 
-let result = loop { break 42; };  // result = 42
-
-while condition { /* ... */ }
-for element in array.iter() { /* ... */ }
-for (index, value) in (0..10).enumerate() { /* ... */ }
-
-// 循环标签
-'outer: loop {
-    loop { break 'outer; }
-}
-```
-
-### 2.3 模式匹配
-
-```rust
+// match — exhaustive
 match value {
     1 => println!("one"),
-    2 | 3 => println!("two or three"),      // 或模式
-    5..=10 => println!("range 5..=10"),     // 范围模式
-    n @ 11..=20 => println!("between 11-20: {n}"),  // @ 绑定
-    _ => println!("anything"),              // 通配符
+    2 | 3 => println!("two or three"),
+    5..=10 => println!("range inclusive"),
+    n @ 11..=20 => println!("bound: {n}"),
+    _ => println!("catch-all"),
 }
 
-// if let — 单分支匹配
+// Pattern matching
 if let Some(x) = optional { println!("{x}"); }
-
-// while let
 while let Some(top) = stack.pop() { /* ... */ }
-
-// let-else（需要退出路径）
-let Ok(value) = result else { return; };
+let Ok(v) = risky() else { return Err("fail"); };
 ```
 
-## 三、所有权、借用与生命周期
-
-### 3.1 所有权规则
+### Ownership & Borrowing
 
 ```rust
-// 1. 每个值有唯一所有者
-// 2. 同一时间只有一个可变引用或任意多个不可变引用
-// 3. 引用必须始终有效
+// Ownership rules:
+// 1. Each value has one owner at a time
+// 2. Either multiple &T or one &mut T
+// 3. References must always be valid
 
 let s = String::from("hello");
-let t = s;               // s 被移动到 t，s 不再有效
-// println!("{s}");      // 编译错误
+let t = s;                           // moved — s no longer valid
 
-let a = [1, 2, 3];
-let b = a;               // i32 实现 Copy，a 仍有效（栈上数据）
+let a = [1, 2, 3];                   // i32: Copy — a still valid
+let b = a;
 
-// Clone（显式深拷贝）
 let s1 = String::from("hello");
-let s2 = s1.clone();
-println!("{s1}, {s2}");  // 均有效
-```
+let s2 = s1.clone();                 // explicit deep copy
 
-### 3.2 引用与借用
+// Borrowing (&T — immutable, &mut T — mutable, exclusive)
+fn len(s: &String) -> usize { s.len() }
+fn push(s: &mut String, c: char) { s.push(c); }
 
-```rust
-fn calculate_length(s: &String) -> usize { s.len() }   // 不可变借用
-fn change(s: &mut String) { s.push_str(" world"); }    // 可变借用
-
-let s = String::from("hello");
-let r1 = &s;   // OK
-let r2 = &s;   // OK — 多个不可变引用
-// let r3 = &mut s;  // 错误！不可同时借用可变和不可变
-
-let mut s = String::from("hello");
-let r1 = &mut s;   // OK
-// let r2 = &mut s; // 错误！只能有一个可变引用
-```
-
-### 3.3 切片
-
-```rust
-let s = String::from("hello world");
-let hello = &s[0..5];       // 字符串切片 &str
-let world = &s[6..11];
-
-let a = [1, 2, 3, 4, 5];
-let slice = &a[1..3];       // 数组切片 &[i32]
-```
-
-### 3.4 生命周期
-
-```rust
-// 生命周期注解
+// Lifetimes
 fn longest<'a>(x: &'a str, y: &'a str) -> &'a str {
     if x.len() > y.len() { x } else { y }
 }
+// Elision rule: fn first_word(s: &str) -> &str  →  fn first_word<'a>(s: &'a str) -> &'a str
 
-// 省略规则：每个引用参数有自己的生命周期
-// fn first_word(s: &str) -> &str  // 等价于 fn first_word<'a>(s: &'a str) -> &'a str
+// 'static — lives for entire program
+let s: &'static str = "hello";
 
-// 'static — 整个程序生命周期
-let s: &'static str = "I live forever";
-
-// 生命周期约束
-struct Book<'a> {
-    title: &'a str,
-}
-
-impl<'a> Book<'a> {
-    fn read(&self) -> &str { self.title }  // 输出 = 输入的生命周期
-}
+// Lifetime bounds on struct
+struct Book<'a> { title: &'a str }
+impl<'a> Book<'a> { fn read(&self) -> &str { self.title } }
 ```
 
-## 四、结构体、枚举与模式匹配
-
-### 4.1 结构体
+### Structs, Enums & Pattern Matching
 
 ```rust
-// 具名结构体
-struct User {
-    active: bool,
-    username: String,
-    email: String,
-    sign_in_count: u64,
+struct User { active: bool, username: String, email: String, sign_in_count: u64 }
+
+// Field init shorthand + update syntax
+fn new_user(email: String) -> User {
+    User { email, username: email, active: true, sign_in_count: 1 }
 }
+let u2 = User { email: String::from("b@c"), ..u1 };  // partial move
 
-fn build_user(email: String, username: String) -> User {
-    User {
-        active: true,
-        username,       // 字段初始化简写
-        email,
-        sign_in_count: 1,
-    }
-}
-
-// 结构体更新语法
-let user2 = User {
-    email: String::from("another@example.com"),
-    ..user1             // 其余字段从 user1 移动
-};
-
-// 元组结构体
+// Tuple struct / Unit struct
 struct Color(i32, i32, i32);
-let black = Color(0, 0, 0);
-
-// 单元结构体
 struct AlwaysEqual;
-```
 
-### 4.2 方法
-
-```rust
-struct Rectangle {
-    width: u32,
-    height: u32,
-}
-
+// Methods — impl blocks
 impl Rectangle {
-    // 方法：&self 不可变借用
-    fn area(&self) -> u32 {
-        self.width * self.height
-    }
-
-    // 可变方法
-    fn set_width(&mut self, w: u32) {
-        self.width = w;
-    }
-
-    // 关联函数（无 self）
-    fn square(size: u32) -> Self {
-        Self { width: size, height: size }
-    }
-}
-```
-
-### 4.3 枚举
-
-```rust
-enum IpAddr {
-    V4(u8, u8, u8, u8),
-    V6(String),
+    fn area(&self) -> u32 { self.width * self.height }           // &self
+    fn set_width(&mut self, w: u32) { self.width = w; }          // &mut self
+    fn square(size: u32) -> Self { Self { width: size, height: size } }  // associated fn
 }
 
+// Enum with data
 enum Message {
-    Quit,
-    Move { x: i32, y: i32 },
-    Write(String),
-    ChangeColor(Color),
+    Quit, Move { x: i32, y: i32 }, Write(String), ChangeColor(i32, i32, i32),
 }
 
-impl Message {
-    fn call(&self) { /* ... */ }
-}
-
-// Option<T> — 无 null
-enum Option<T> {
-    None,
-    Some(T),
-}
-```
-
-### 4.4 深度模式匹配
-
-```rust
-// 解构结构体
+// Deep pattern matching
 let User { username, email, .. } = user;
-
-// 解构枚举
 match msg {
     Message::Quit => (),
     Message::Move { x, y } => println!("{x}, {y}"),
     Message::Write(text) => println!("{text}"),
-    _ => (),
-}
-
-// @ 绑定
-match num {
-    n @ 1..=10 => println!("small: {n}"),
-    n @ 11..=100 => println!("medium: {n}"),
-    _ => println!("large"),
-}
-
-// 匹配守卫
-match pair {
-    (x, y) if x == y => println!("equal"),
-    (x, y) if x + y == 0 => println!("opposites"),
-    _ => (),
+    Message::ChangeColor(r, g, b) => (),
 }
 ```
 
-## 五、泛型与 Trait
-
-### 5.1 泛型
+### Generics & Traits
 
 ```rust
-// 泛型函数
-fn largest<T: PartialOrd>(list: &[T]) -> &T {
-    let mut largest = &list[0];
-    for item in list {
-        if item > largest { largest = item; }
-    }
-    largest
-}
-
-// 泛型结构体
-struct Point<T> {
-    x: T,
-    y: T,
-}
-
-impl<T> Point<T> {
-    fn x(&self) -> &T { &self.x }
-}
-
-// 泛型常量参数
-fn nth_element<const N: usize>(arr: &[i32]) -> i32 {
-    arr[N]
-}
-```
-
-### 5.2 Trait
-
-```rust
-// 定义 trait
 pub trait Summary {
     fn summarize(&self) -> String;
-
-    // 默认实现
-    fn summarize_default(&self) -> String {
-        String::from("(Read more...)")
-    }
+    fn default_summary(&self) -> String { String::from("(Read more...)") }  // default impl
 }
 
-// 实现 trait
-pub struct Article {
-    pub headline: String,
-    pub location: String,
-}
-
+pub struct Article { pub headline: String, pub location: String }
 impl Summary for Article {
-    fn summarize(&self) -> String {
-        format!("{}, by {}", self.headline, self.location)
-    }
+    fn summarize(&self) -> String { format!("{}, by {}", self.headline, self.location) }
 }
 
-// Trait bound
-fn notify<T: Summary>(item: &T) {
-    println!("{}", item.summarize());
-}
+// Trait bounds — 3 syntaxes
+fn notify1<T: Summary>(item: &T) { item.summarize(); }
+fn notify2(item: &impl Summary) { item.summarize(); }                    // sugar
+fn notify3<T, U>(t: &T, u: &U) where T: Summary + Clone, U: Debug, {}
 
-// where 子句
-fn notify2<T, U>(t: &T, u: &U)
-where
-    T: Summary + Clone,
-    U: Summary + Debug,
-{ /* ... */ }
+// Trait objects (dynamic dispatch)
+let trait_obj: Box<dyn Summary> = Box::new(Article { /* ... */ });
 
-// impl Trait 语法
-fn notify3(item: &impl Summary) { /* ... */ }
+// Associated types
+pub trait Iterator { type Item; fn next(&mut self) -> Option<Self::Item>; }
 
-// Trait 对象（动态分发）
-let article: Box<dyn Summary> = Box::new(Article { /* ... */ });
-
-// 关联类型
-pub trait Iterator {
-    type Item;
-    fn next(&mut self) -> Option<Self::Item>;
-}
-
-// derive 宏
+// Derive macros
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
-struct MyStruct { /* ... */ }
+struct Point { x: i32, y: i32 }
+
+// Generic const parameters
+fn first_n<const N: usize>(arr: &[i32]) -> [i32; N] {
+    let mut result = [0; N];
+    for (i, v) in arr.iter().take(N).enumerate() { result[i] = *v; }
+    result
+}
 ```
 
-## 六、集合与迭代器
-
-### 6.1 Vec
+### Collections
 
 ```rust
-let mut v: Vec<i32> = Vec::new();       // 空向量
-let v = vec![1, 2, 3];                  // 宏
-
+let mut v = vec![1, 2, 3];
 v.push(4);
-let last = v.pop();                     // Option<T>
-let third = &v[2];                      // 索引（越界 panic）
-let third = v.get(2);                   // Option<&T>
-```
+let last = v.pop();              // Option<i32>
+let third = v.get(2);            // Option<&i32>
+v.sort();
+v.dedup();
+v.retain(|x| *x > 0);
 
-### 6.2 String
-
-```rust
-let mut s = String::new();
-let s = "hello".to_string();
-let s = String::from("hello");
+let mut s = String::from("hello");
 s.push_str(" world");
-s.push('!');
+let combined = format!("{}-{}", a, b);  // no move like + does
 
-// 拼接
-let s = s1 + &s2;               // s1 被移动
-let s = format!("{s1}-{s2}");   // 不移动所有权
-
-// 字符串切片
-let hello = &s[0..5];           // 注意 Unicode 边界
+let mut map = HashMap::new();
+map.insert("key".to_string(), 42);
+map.entry("key".to_string()).or_insert(0);    // Entry API
+for (k, v) in &map { println!("{k}: {v}"); }
 ```
 
-### 6.3 HashMap
+### Iterators
 
 ```rust
-use std::collections::HashMap;
+let v = vec![1, 2, 3, 4, 5];
 
-let mut scores = HashMap::new();
-scores.insert(String::from("Blue"), 10);
-scores.insert(String::from("Yellow"), 50);
-
-// Entry API
-scores.entry(String::from("Blue")).or_insert(50);
-```
-
-### 6.4 迭代器
-
-```rust
-let v = vec![1, 2, 3];
-let iter = v.iter();
-
-// 适配器（惰性）
-let result: Vec<_> = v.iter()
-    .map(|x| x + 1)
-    .filter(|x| x > &1)
+// Adapters (lazy)
+let evens_squared: Vec<_> = v.iter()
+    .filter(|x| *x % 2 == 0)
+    .map(|x| x * x)
     .collect();
 
-// 消费者
+// Consumers
 let sum: i32 = v.iter().sum();
+let product: i32 = v.iter().product();
 let count = v.iter().count();
-let any_gt_2 = v.iter().any(|&x| x > 2);
+let any = v.iter().any(|x| x > &3);
+let all = v.iter().all(|x| x > &0);
+let max = v.iter().max();
+let folded = v.iter().fold(0, |acc, x| acc + x);
+
+// next_chunk (1.93+)
+let [a, b]: [i32; 2] = v.iter().copied().next_chunk().unwrap();
 ```
 
-## 七、错误处理
-
-### 7.1 panic 与 Result
+### Error Handling
 
 ```rust
-// 不可恢复错误
-panic!("crash and burn");
-let v = vec![1];
-v[99];    // 运行时 panic
+// ? operator — propagate errors
+fn read_file(path: &str) -> io::Result<String> {
+    let mut f = File::open(path)?;
+    let mut contents = String::new();
+    f.read_to_string(&mut contents)?;
+    Ok(contents)
+}
 
-// 可恢复错误
-use std::fs::File;
-let f = File::open("hello.txt");
-let f = match f {
-    Ok(file) => file,
-    Err(error) => panic!("Problem: {error:?}"),
-};
+// Combinators
+result.map(|v| v + 1).map_err(|e| format!("{e}")).and_then(|v| Ok(v * 2));
+let x = optional.unwrap_or(0);
+let x = optional.unwrap_or_else(|| expensive_default());
+let x = result.expect("must succeed");
+let x = result.unwrap_or_default();
 
-// ? 运算符（推荐）
-fn read_username() -> Result<String, io::Error> {
-    let mut f = File::open("username.txt")?;
-    let mut s = String::new();
-    f.read_to_string(&mut s)?;
-    Ok(s)
+// Custom error types with thiserror
+use thiserror::Error;
+#[derive(Error, Debug)]
+pub enum MyError {
+    #[error("network error: {0}")]
+    Network(#[from] io::Error),
+    #[error("invalid data: {msg}")]
+    Parse { msg: String },
+}
+
+// anyhow for application code
+use anyhow::{Result, Context};
+fn do_work() -> Result<()> {
+    let data = read_file("config.toml").context("failed to read config")?;
+    Ok(())
 }
 ```
 
-### 7.2 组合器
+### Smart Pointers
 
 ```rust
-result.map(|v| v + 1)
-      .map_err(|e| format!("error: {e}"))
-      .and_then(|v| Ok(v * 2))
-      .unwrap_or(0)
-      .unwrap_or_else(|_| 42);
+let b = Box::new(5);               // heap allocated
+let rc = Rc::new(5);               // reference counted (single-threaded)
+let arc = Arc::new(5);             // atomic reference counted (multi-threaded)
 
-let x = optional.unwrap_or(0);
-let y = optional.expect("value expected");
-```
+// Interior mutability
+let cell = Cell::new(42);          // for Copy types: get, set, replace
+let val = cell.get();
+cell.set(100);
 
-## 八、智能指针
+let refcell = RefCell::new(vec![1, 2, 3]);
+refcell.borrow_mut().push(4);      // runtime borrow checking — panics on violation
 
-```rust
-let b = Box::new(5);                    // 堆分配
-let rc = Rc::new(5);                    // 引用计数（单线程）
-let arc = Arc::new(5);                  // 原子引用计数（多线程）
-
-let cell = Cell::new(42);               // 内部可变性（Copy 类型）
-let refcell = RefCell::new(5);          // 运行时借用检查
-
-// Rc<RefCell<T>> 组合
+// Rc<RefCell<T>> — shared mutable state (single-threaded)
 let shared = Rc::new(RefCell::new(42));
 *shared.borrow_mut() += 1;
 ```
 
-## 九、闭包
+### Modules & Visibility
 
 ```rust
-let add_one = |x| x + 1;                       // 自动推断
-let add = |a: i32, b: i32| -> i32 { a + b };   // 显式类型
+// lib.rs — crate root
+pub mod front_of_house;        // loads front_of_house.rs or front_of_house/mod.rs
+mod back_of_house;             // private to crate
 
-// 环境捕获
-let x = vec![1, 2, 3];
-let equal_to_x = move |z| z == x;              // move 所有权
-```
-
-## 十、模块与可见性
-
-```rust
-// src/lib.rs — crate 根
-pub mod front_of_house;
-
-// src/front_of_house.rs
-pub mod hosting;
-
-// src/front_of_house/hosting.rs
-pub fn add_to_waitlist() {}
-
-// 路径
+// Paths
 use crate::front_of_house::hosting;
-use super::serve_order;           // 父模块
-use std::collections::HashMap;    // 绝对路径
+use super::serve_order;
+use std::collections::HashMap;
 
-// 嵌套路径
-use std::{cmp::Ordering, io};
+// Nested / glob / alias
+use std::{cmp::Ordering, io::{self, Write}};
+use std::collections::*;       // glob — use sparingly
+use std::result::Result as StdResult;
 
-// 重新导出
+// Re-export
 pub use crate::front_of_house::hosting;
 ```
 
-## 十一、标准库常用模块速查
+### Common Attributes
 
-| 模块 | 关键类型/函数 | 用途 |
-|------|-------------|------|
-| `std::io` | `Read`, `Write`, `BufRead`, `stdin()`, `stdout()` | I/O |
-| `std::fs` | `File`, `read_to_string`, `write`, `create_dir` | 文件系统 |
-| `std::path` | `Path`, `PathBuf` | 路径操作 |
-| `std::time` | `Duration`, `Instant`, `SystemTime` | 时间 |
-| `std::env` | `args()`, `var()`, `current_dir()` | 环境 |
-| `std::process` | `Command`, `ExitCode` | 进程 |
-| `std::net` | `TcpListener`, `TcpStream`, `UdpSocket` | 网络 |
+```rust
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[repr(C)]                          // C-compatible layout
+#[repr(transparent)]                // newtype wrapper, same layout as inner type
+#[repr(align(16))]                  // 16-byte alignment
+#[cfg(target_os = "linux")]
+#[must_use = "this result must be used"]
+#[allow(clippy::needless_return)]
+#[deny(unsafe_op_in_unsafe_fn)]     // hard error in 1.93
+```
 
-## 官方参考
+## Quick Fixes
 
-- [The Rust Programming Language (The Book)](https://doc.rust-lang.org/book/)
-- [Rust Standard Library API](https://doc.rust-lang.org/std/index.html)
-- [Rust by Example](https://doc.rust-lang.org/rust-by-example/)
-- [Rust Reference](https://doc.rust-lang.org/reference/index.html)
+| Error Code / Pattern | Likely Cause | Fix |
+|---------------------|-------------|-----|
+| `E0308: mismatched types` | Type mismatch | Check expected vs actual type; add explicit annotation |
+| `E0502: cannot borrow as mutable` | Simultaneous &T + &mut T | Restructure borrow scope; clone if needed |
+| `E0597: borrowed value does not live long enough` | Reference outlives source | Extend source lifetime, return owned value |
+| `E0277: trait bound not satisfied` | Missing trait impl | Add `#[derive(...)]` or `impl Trait for Type` |
+| `E0432: unresolved import` | Wrong module path | Check path; use `crate::`, `super::`, absolute path |
+| `E0382: use of moved value` | Value moved, then reused | Clone before move, or restructure code |
+| `E0499: cannot borrow as mutable more than once` | Multiple &mut refs | Use single &mut, split with scopes |
+| `E0106: missing lifetime specifier` | Lifetime needed | Add `<'a>` to fn signature or struct |
+| `E0716: temporary value dropped` | Reference to temporary | Store temporary in a let binding first |
+| `E0061: wrong number of arguments` | Wrong call | Check function signature |
+| `E0133: use of unsafe` | Unsafe call without block | Wrap in `unsafe { ... }` |
+| `cannot use `self` in associated function` | Used `&self` on non-method | Requires a first parameter of `&self`, `&mut self`, or `self` |
+| `format argument must be captured` | Edition mismatch | Use `"{var}"` style (2021+) or `"{}", var` |
+
+## Common Anti-Patterns
+
+| Anti-Pattern | Problem | Better Approach |
+|-------------|---------|----------------|
+| `value.clone()` before reading | Unnecessary allocation | Use `&value` |
+| `.unwrap()` everywhere | Panics on error | Use `?` or `.ok_or(...)?` |
+| `String` + `&str` in hot loop | Repeated allocations | Use `format!` or `join` |
+| `Box::new(42)` for simple values | Unnecessary heap allocation | Stack-allocate directly |
+| Large `enum` with big variants | Stack copy overhead | Box the large variant(s) |
+| `std::mem::forget()` to avoid drop | Unsound | Use `ManuallyDrop` instead |
+| Long `Mutex` lock scope | Lock contention | `{ let guard = lock.lock(); ... }` |
+| Runtime `RefCell` panic | Unexpected borrow | Check with `try_borrow_mut()` |
+
+## Gotchas (Rust 1.93)
+
+1. **`unsafe_op_in_unsafe_fn` is now a hard error** — All unsafe operations must be in explicit `unsafe { }`, even inside `unsafe fn`
+2. **`let else` requires a diverging else branch** — The `else` must be `return`, `break`, `panic!`, etc.
+3. **`impl Trait` in argument position is sugar** — `fn f(x: impl T)` = `fn f<X: T>(x: X)`
+4. **`dyn Trait` is not `Sized`** — Must be behind pointer (`&dyn`, `Box<dyn>`, etc.)
+5. **`self` vs `Self`** — `self` is the method receiver; `Self` is the implementing type alias
+6. **`..` vs `..=`** — `0..5` yields 0,1,2,3,4; `0..=5` yields 0,1,2,3,4,5
+7. **String indexing by byte is error-prone** — `&s[i..j]` panics if not on char boundary; prefer `.chars()`
+8. **`?` requires matching return type** — Only works inside functions returning `Result` or `Option`
+9. **`#[derive(Debug)]` requires all fields are `Debug`** — Private fields of non-Debug types cause errors
+10. **Edition 2021+ closure capture** — Closures capture only the fields they use, not the whole struct
+
+## FAQ
+
+**Q: What Rust edition should I use?**
+A: The latest stable edition is **2024** (set `edition = "2024"` in Cargo.toml). See `rust-style-clippy` for migration guidance from 2015/2018/2021.
+
+**Q: How does this skill differ from domain skills?**
+A: This skill covers language fundamentals and common std types. For deep dives into specific areas — concurrency, unsafe, macros, CLI, Web, embedded — use the corresponding domain skill.
+
+**Q: What if example code fails to compile?**
+A: Verify `rustc --version` ≥ 1.93.0. If older, some APIs/behaviour may differ. Use the Quick Fixes table above.
+
+**Q: Can I use this offline?**
+A: Yes. All `references/` and `examples/` files are local copies and work without internet access.
+
+**Q: Does this skill collect my data?**
+A: No. This skill is a pure documentation reference and does not collect any user data.
+
+## Audience
+
+| User Type | Usage |
+|-----------|-------|
+| **Rust beginners** | Write basic code and learn Rust idioms from Language Reference |
+| **Migration users** | Migrate from older editions using the Quick Fixes table |
+| **Experienced developers** | Verify API patterns, look up syntax edge cases, load references/ for depth |
+
+## Offline Examples (examples/)
+
+- `examples/quickstart-workflows.md` — Basic project, data structs, I/O, error handling
+- `examples/collections-patterns.md` — Vec, String, HashMap, iterator chains, sorting
+- `examples/trait-design-patterns.md` — Trait definition, default methods, trait objects, blanket impls
+- `examples/error-handling-patterns.md` — Custom errors, anyhow, thiserror, combinators
+- `examples/ownership-patterns.md` — Borrow checker patterns, lifetime tricks, NLL patterns
+
+## Language References (references/)
+
+- **[Patterns & Idioms](references/patterns.md)** — Builder pattern, newtype, RAII, interior mutability, typestate
+- **[Style Guide](references/style-guide.md)** — Naming conventions, file organization, doc comments
+
+## Standard Library References (references/)
+
+### Collections
+- **[Vec](references/vec.md)** — Creation, mutation, capacity, drain, retain, sort
+- **[String & str](references/string.md)** — UTF-8 strings, manipulation, searching, conversion
+- **[HashMap](references/hashmap.md)** — Entry API, custom keys / hashers, iteration
+- **[Iterator patterns](references/iterators.md)** — Adapter combinations, custom iterators, performance notes
+
+### I/O & Filesystem
+- **[std::io](references/io.md)** — Read/Write/BufRead traits, BufReader/BufWriter, stdin/stdout/stderr
+- **[std::fs](references/fs.md)** — File ops, directories, metadata, path patterns
+- **[std::path](references/path.md)** — Path/PathBuf: join, canonicalize, components, glob
+
+### Text & Formatting
+- **[std::fmt](references/fmt.md)** — Format string syntax, custom Display/Debug, formatting traits
+
+### Error Handling
+- **[Error Patterns](references/errors.md)** — Custom error types, From conversions, error context propagation
+
+### Smart Pointers
+- **[Box, Rc, Arc](references/smart-pointers.md)** — Heap allocation, ref counting, Deref/Drop patterns
+- **[Cell, RefCell](references/interior-mutability.md)** — Interior mutability, OnceCell, LazyCell
+- **[Conversions](references/conversions.md)** — From/Into, TryFrom/TryInto, AsRef/AsRef patterns
+
+## Workflow
+
+Step 1. **Confirm version** — Run `rustc --version` (need ≥ 1.93.0)
+
+Step 2. **Essential syntax** — Use Language Reference section above for fundamentals
+
+Step 3. **Std library lookup** — Find the module in the Std Library Coverage Map; load `references/` file
+
+Step 4. **Copyable code** — Use `examples/` for quick-start patterns
+
+Step 5. **Handle errors** — Use Quick Fixes table for compilation errors
+
+Step 6. **Domain switch** — For concurrency, unsafe, macros, CLI, Web, embedded → use relevant domain skill

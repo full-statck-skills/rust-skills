@@ -238,6 +238,25 @@ fn main() -> ExitCode {
 // }
 ```
 
+## Workflow
+
+1. 解析参数 — 使用 clap 定义 CLI 接口（参数、选项、子命令）
+2. 处理 I/O — 使用 stdin/stdout/stderr，支持管道模式
+3. 读写文件 — 使用 BufReader/BufWriter 高效处理文件
+4. 配置日志 — 使用 env_logger/tracing 输出运行日志
+5. 错误处理 — 使用 anyhow 包裹错误，提供友好的错误消息
+6. 测试验证 — 用 assert_cmd 测试 CLI 输出，用 assert_fs 测试文件操作
+
+
+## Gotchas
+
+1. clap 的 default_value 和 required 冲突 - 设 default_value 后 required=false
+2. io::stdin().lock() 的生命周期 - StdinLock 借用 Stdin，lock() 后不能 move stdin
+3. BufReader 的 lines() 已移除换行符 - 返回的 String 不含 \n
+4. Path::new('') 是空路径 - path.join('') 返回 path 本身
+5. env_logger::init() 只能调用一次 - 测试中需用 env_logger::try_init()
+
+
 ## 官方参考
 
 - [Command Line Book](https://rust-cli.github.io/book/index.html)

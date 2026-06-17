@@ -215,6 +215,25 @@ MEMORY {
 | 调试 | defmt | 高效日志 |
 | 调试 | probe-rs (CLI) | 调试器 |
 
+## Workflow
+
+1. 选择硬件 — 确定目标微控制器（Cortex-M/RISC-V/其他）
+2. 配置 no_std 环境 — 设置 #![no_std]、panic_handler、链接脚本
+3. 初始化外设 — 使用 PAC crate 获取外设所有权，配置时钟
+4. 实现 HAL 驱动 — 使用 embedded-hal trait 编写可移植的外设驱动
+5. 处理中断 — 配置 NVIC，编写中断处理函数
+6. 部署与调试 — 使用 probe-rs/OpenOCD 烧录和调试固件
+
+
+## Gotchas
+
+1. #![no_std] 项目可用 alloc crate - 在支持堆分配时可以 Vec、String
+2. Cortex-M 中断处理函数不能有参数 - #[interrupt] fn 必须是 fn() 类型
+3. embedded-hal 1.0 OutputPin::set_high() 返回 Result
+4. cortex_m::Peripherals::take() 只能成功一次 - 第二次返回 None
+5. RTIC spawn 在硬件任务中需用 spawn_after - 普通 spawn 不可用
+
+
 ## 官方参考
 
 - [Embedded Rust Book](https://doc.rust-lang.org/embedded-book)

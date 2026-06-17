@@ -551,6 +551,16 @@ cargo owner --list             # 查看所有者
 7. **Workspace 依赖版本的锁定** — 工作空间共享一个 `Cargo.lock`，使用 `cargo update -p package` 更新单个包
 8. **`cfg!(feature = "x")` 在 build.rs 中不可用** — build.rs 不参与 crate 特性系统，需用 `cargo::rustc-cfg` 传递
 
+
+## Gotchas
+
+1. cargo add 和手动编辑 Cargo.toml 可能冲突 - cargo add 重写 [dependencies] 时会丢弃注释
+2. resolver 2 与 3 的特性合并行为不同 - resolver 3 隔离工作空间各 crate 特性
+3. build.rs 未声明 rerun-if-changed - Cargo 只会在 crate 源文件变化时重跑 build.rs
+4. optional=true 依赖自动创建特性 - 1.60+ 用 dep: 前缀显式控制
+5. [patch] 只对当前工作空间有效 - 不能 patch build 依赖
+6. cargo publish 后不可删除 - 只能 yank（弃用）不能移除
+
 ## FAQ
 
 **Q：cargo check 和 cargo build 有什么区别？**

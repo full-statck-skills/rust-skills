@@ -220,6 +220,25 @@ unsafe impl GlobalAlloc for MyAllocator {
 static ALLOCATOR: MyAllocator = MyAllocator;
 ```
 
+## Workflow
+
+1. 确认 unsafe 的必要性 — 评估能否用安全代码实现相同功能
+2. 隔离 unsafe 块 — 将 unsafe 操作限制在最小范围，封装为安全函数
+3. 编写 safety 文档 — 为每个 unsafe 函数标注调用者需满足的前提条件
+4. 检查内存安全 — 验证裸指针有效性、边界、对齐、生命周期
+5. 配置 FFI 绑定 — 使用 #[link] 映射 C 类型，处理错误码
+6. 测试验证 — 用 Miri（cargo miri test）检测 UB
+
+
+## Gotchas
+
+1. transmute 不检查类型大小 - 源和目标类型大小不同导致 UB
+2. MaybeUninit::assume_init() 前必须初始化 - 未初始化内存读取是 UB
+3. extern C 函数必须在 unsafe 中调用 - 即使函数签名不包含 unsafe
+4. #[no_mangle] 禁用了 name mangling - 同名函数导致链接错误
+5. Pin<Box<T>> 只对 !Unpin 类型有实际约束 - Unpin 类型可被移动
+
+
 ## 官方参考
 
 - [The Rustonomicon](https://doc.rust-lang.org/nomicon/)

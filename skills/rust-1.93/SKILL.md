@@ -88,6 +88,32 @@ Format this struct with Display and Debug traits
 4. **Load examples/files** for copyable snippets (see Offline Examples section)
 5. **Switch to domain skills** for specialized work (concurrency, unsafe, macros, CLI, Web, embedded)
 
+## 中文版本说明
+
+本技能提供 Rust 1.93 编程语言的中文参考。Rust 是一门系统编程语言，专注于安全、速度和并发。核心特性包括：所有权系统（无需垃圾回收的内存安全）、零成本抽象、无畏并发、代数类型系统。
+
+### 常用术语对照
+
+| English | 中文 |
+|---------|------|
+| ownership | 所有权 |
+| borrowing | 借用 |
+| lifetime | 生命周期 |
+| trait | 特征 / 特质 |
+| enum | 枚举 |
+| struct | 结构体 |
+| pattern matching | 模式匹配 |
+| closure | 闭包 |
+| iterator | 迭代器 |
+| panic | 恐慌（不可恢复错误） |
+| Result | 结果类型 |
+| Option | 选项类型 |
+| smart pointer | 智能指针 |
+| concurrency | 并发 |
+| async/await | 异步/等待 |
+| unsafe | 不安全代码 |
+| macro | 宏 |
+
 ## Critical: What's New in Rust 1.93
 
 Rust 1.93 (February 2026) stabilises these notable features:

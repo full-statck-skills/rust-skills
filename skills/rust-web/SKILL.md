@@ -228,6 +228,25 @@ async fn handle_socket(mut socket: WebSocket) {
 | JWT | jsonwebtoken | JWT 编解码 |
 | 模板 | askama | 编译时模板 |
 
+## Workflow
+
+1. 选择框架 — 确定使用 axum（推荐）或其他框架
+2. 设计路由 — 规划 RESTful API 路由和 handler 签名
+3. 连接数据库 — 配置 sqlx 连接池，编写编译时检查的查询
+4. 添加中间件 — 配置 CORS、跟踪、压缩、超时等中间件
+5. 错误处理 — 统一错误类型，将应用错误转为 HTTP 响应
+6. 测试 — 编写集成测试，使用 axum::test 或 reqwest 测试端点
+
+
+## Gotchas
+
+1. axum extract::Path 顺序依赖路由参数名 - /:id 必须匹配 Path<u32> 类型
+2. tokio::spawn 的 Future 必须 Send - AppState 含 Rc/RefCell 会编译失败
+3. sqlx::query! 需要运行时数据库验证 - CI 中需启动数据库或改用 query_as
+4. serde #[serde(flatten)] 性能开销 - 创建临时 Value 中间表示
+5. axum WebSocket::recv() 返回 None 表示连接已关闭
+
+
 ## 官方参考
 
 - [axum docs](https://docs.rs/axum/)

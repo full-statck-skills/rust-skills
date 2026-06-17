@@ -185,6 +185,25 @@ cargo install cargo-generate
 cargo generate --git https://github.com/rust-unofficial/patterns.git
 ```
 
+## Workflow
+
+1. 确认项目类型 — 单 crate 包、多 crate 包还是工作空间
+2. 选择命名约定 — 按项目用途确定二进制和库名称（snake_case）
+3. 规划模块层次 — 从 lib.rs 开始按功能域拆分模块文件和目录
+4. 设计可见性接口 — 确定哪些类型/函数是 pub/pub(crate) 还是私有
+5. 组织路径与 use — 配置 use 导入，确保不违反模块可见性规则
+6. 验证 — cargo check 确认编译通过，检查 IDE 模块导航正常
+
+
+## Gotchas
+
+1. crate:: vs ::crate_name:: - crate:: 引用当前 crate 根；::other_crate:: 是绝对路径引用外部 crate
+2. pub(crate) 在 2015 edition 中不可用 - 需要 edition 2018+
+3. mod.rs 已弃用 - 2018 edition 起推荐 module_name.rs 而非 module_name/mod.rs
+4. workspace resolver 版本影响特性解析 - edition 2021+ 自动选 resolver 3
+5. #[path] 属性绕过文件系统约定 - 使用后模块路径不再遵循默认文件树
+
+
 ## 官方参考
 
 - [The Book ch 7](https://doc.rust-lang.org/book/ch07-00-managing-growing-projects-with-packages-crates-and-modules.html)

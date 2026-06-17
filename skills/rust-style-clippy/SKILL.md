@@ -136,6 +136,24 @@ rustc --explain E0277
 | E0499 | 同时可变借用 | 只能一个 `&mut` |
 | E0716 | 临时值生命周期不足 | 临时值的引用超出其作用域 |
 
+## Workflow
+
+1. 格式化代码 — cargo fmt 确保代码风格一致
+2. 运行 Clippy — cargo clippy 发现潜在错误和改进机会
+3. 配置 Clippy — 按项目需求启用/禁用特定 lint（clippy.toml）
+4. 检查 Edition — 确认 Cargo.toml 中 edition 是最新的
+5. 依赖安全 — cargo audit 扫描已知漏洞
+6. CI 集成 — 集成 fmt --check + clippy + audit 到 CI 流程
+
+
+## Gotchas
+
+1. cargo clippy --fix 只修复 MachineApplicable 级别的 lint
+2. rustfmt 配置文件名是 .rustfmt.toml - 非 rustfmt.toml
+3. Edition 迁移后可能出新的 warning - 特别是 2024 的 unsafe_op_in_unsafe_fn
+4. cargo fix --edition 不会修复所有问题 - 迁移后仍需手动检查
+
+
 ## 官方参考
 
 - [rustfmt Book](https://doc.rust-lang.org/rustfmt/)

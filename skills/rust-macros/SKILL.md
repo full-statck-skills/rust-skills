@@ -191,6 +191,25 @@ macro_rules! log_syntax {
 }
 ```
 
+## Workflow
+
+1. 确定宏类型 — 选择声明宏（macro_rules!）还是过程宏（derive/attribute/function-like）
+2. 编写宏 — 声明宏用匹配+替换；过程宏用 syn 解析 + quote 生成
+3. 测试宏展开 — cargo expand 或 trace_macros!() 检查展开结果
+4. 处理 hygiene — 使用 $crate 避免命名冲突
+5. 完善文档 — 为宏添加文档注释和 doctest 示例
+6. 发布 — 过程宏需独立 proc-macro crate，测试不同上下文的行为
+
+
+## Gotchas
+
+1. 声明宏中 $crate 必须用于引用外部 crate - 直接用 crate 名会导致 scope 冲突
+2. 过程宏 crate 只能导出 proc_macro - 不能同时包含其他 pub 函数作为库 API
+3. macro_rules! 匹配规则顺序敏感 - 通用匹配应在最后
+4. proc_macro_derive 注册名是 #[proc_macro_derive(MyTrait)] 中的 MyTrait - 函数名无关
+5. sanitize 用户输入在 proc macro 中很重要 - 错误 TokenStream 导致难以调试的错误
+
+
 ## 官方参考
 
 - [The Book ch 19.6](https://doc.rust-lang.org/book/ch19-06-macros.html)

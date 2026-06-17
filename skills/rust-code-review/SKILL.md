@@ -141,6 +141,24 @@ cargo update                   # 更新依赖到最新兼容版本
 # https://rustsec.org/
 ```
 
+## Workflow
+
+1. 检查命名规范 — 确认所有类型/函数/变量遵循 Rust 命名约定
+2. 检查 unsafe 安全 — 审查所有 unsafe 块的 safety 文档和不变条件
+3. 检查错误处理 — 确认所有 Result 被正确处理，不使用 unwrap()
+4. 检查性能 — 识别不必要的 clone、分配、锁竞争
+5. 检查 API 设计 — 审查类型安全、trait 对象安全、泛型约束
+6. 工具检查 — cargo clippy + cargo fmt --check + cargo audit
+
+
+## Gotchas
+
+1. #![deny(unsafe_op_in_unsafe_fn)] 是 Rust 1.93 硬错误 - 所有 unsafe 操作需显式包裹
+2. expect() 比 unwrap() 稍好但仍有 panic 风险 - 推荐用 ? 运算符
+3. cargo audit 只检查 Cargo.lock - 锁文件过期时结果不准确
+4. 潜在数据竞争不总是在编译期暴露 - Mutex 只保证互斥不保证逻辑顺序
+
+
 ## 官方参考
 
 - [Rust API Guidelines](https://rust-lang.github.io/api-guidelines/)

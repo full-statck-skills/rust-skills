@@ -230,12 +230,12 @@ async fn handle_socket(mut socket: WebSocket) {
 
 ## Workflow
 
-1. 选择框架 — 确定使用 axum（推荐）或其他框架
-2. 设计路由 — 规划 RESTful API 路由和 handler 签名
-3. 连接数据库 — 配置 sqlx 连接池，编写编译时检查的查询
-4. 添加中间件 — 配置 CORS、跟踪、压缩、超时等中间件
-5. 错误处理 — 统一错误类型，将应用错误转为 HTTP 响应
-6. 测试 — 编写集成测试，使用 axum::test 或 reqwest 测试端点
+Step 1. 选择框架 — 确定使用 axum（推荐）或其他框架
+Step 2. 设计路由 — 规划 RESTful API 路由和 handler 签名
+Step 3. 连接数据库 — 配置 sqlx 连接池，编写编译时检查的查询
+Step 4. 添加中间件 — 配置 CORS、跟踪、压缩、超时等中间件
+Step 5. 错误处理 — 统一错误类型，将应用错误转为 HTTP 响应
+Step 6. 测试 — 编写集成测试，使用 axum::test 或 reqwest 测试端点
 
 
 ## Gotchas

@@ -222,12 +222,12 @@ static ALLOCATOR: MyAllocator = MyAllocator;
 
 ## Workflow
 
-1. 确认 unsafe 的必要性 — 评估能否用安全代码实现相同功能
-2. 隔离 unsafe 块 — 将 unsafe 操作限制在最小范围，封装为安全函数
-3. 编写 safety 文档 — 为每个 unsafe 函数标注调用者需满足的前提条件
-4. 检查内存安全 — 验证裸指针有效性、边界、对齐、生命周期
-5. 配置 FFI 绑定 — 使用 #[link] 映射 C 类型，处理错误码
-6. 测试验证 — 用 Miri（cargo miri test）检测 UB
+Step 1. 确认 unsafe 的必要性 — 评估能否用安全代码实现相同功能
+Step 2. 隔离 unsafe 块 — 将 unsafe 操作限制在最小范围，封装为安全函数
+Step 3. 编写 safety 文档 — 为每个 unsafe 函数标注调用者需满足的前提条件
+Step 4. 检查内存安全 — 验证裸指针有效性、边界、对齐、生命周期
+Step 5. 配置 FFI 绑定 — 使用 #[link] 映射 C 类型，处理错误码
+Step 6. 测试验证 — 用 Miri（cargo miri test）检测 UB
 
 
 ## Gotchas

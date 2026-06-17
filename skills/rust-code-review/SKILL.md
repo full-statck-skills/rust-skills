@@ -143,12 +143,12 @@ cargo update                   # 更新依赖到最新兼容版本
 
 ## Workflow
 
-1. 检查命名规范 — 确认所有类型/函数/变量遵循 Rust 命名约定
-2. 检查 unsafe 安全 — 审查所有 unsafe 块的 safety 文档和不变条件
-3. 检查错误处理 — 确认所有 Result 被正确处理，不使用 unwrap()
-4. 检查性能 — 识别不必要的 clone、分配、锁竞争
-5. 检查 API 设计 — 审查类型安全、trait 对象安全、泛型约束
-6. 工具检查 — cargo clippy + cargo fmt --check + cargo audit
+Step 1. 检查命名规范 — 确认所有类型/函数/变量遵循 Rust 命名约定
+Step 2. 检查 unsafe 安全 — 审查所有 unsafe 块的 safety 文档和不变条件
+Step 3. 检查错误处理 — 确认所有 Result 被正确处理，不使用 unwrap()
+Step 4. 检查性能 — 识别不必要的 clone、分配、锁竞争
+Step 5. 检查 API 设计 — 审查类型安全、trait 对象安全、泛型约束
+Step 6. 工具检查 — cargo clippy + cargo fmt --check + cargo audit
 
 
 ## Gotchas

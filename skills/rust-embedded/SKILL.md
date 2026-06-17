@@ -217,12 +217,12 @@ MEMORY {
 
 ## Workflow
 
-1. 选择硬件 — 确定目标微控制器（Cortex-M/RISC-V/其他）
-2. 配置 no_std 环境 — 设置 #![no_std]、panic_handler、链接脚本
-3. 初始化外设 — 使用 PAC crate 获取外设所有权，配置时钟
-4. 实现 HAL 驱动 — 使用 embedded-hal trait 编写可移植的外设驱动
-5. 处理中断 — 配置 NVIC，编写中断处理函数
-6. 部署与调试 — 使用 probe-rs/OpenOCD 烧录和调试固件
+Step 1. 选择硬件 — 确定目标微控制器（Cortex-M/RISC-V/其他）
+Step 2. 配置 no_std 环境 — 设置 #![no_std]、panic_handler、链接脚本
+Step 3. 初始化外设 — 使用 PAC crate 获取外设所有权，配置时钟
+Step 4. 实现 HAL 驱动 — 使用 embedded-hal trait 编写可移植的外设驱动
+Step 5. 处理中断 — 配置 NVIC，编写中断处理函数
+Step 6. 部署与调试 — 使用 probe-rs/OpenOCD 烧录和调试固件
 
 
 ## Gotchas

@@ -187,12 +187,12 @@ cargo generate --git https://github.com/rust-unofficial/patterns.git
 
 ## Workflow
 
-1. 确认项目类型 — 单 crate 包、多 crate 包还是工作空间
-2. 选择命名约定 — 按项目用途确定二进制和库名称（snake_case）
-3. 规划模块层次 — 从 lib.rs 开始按功能域拆分模块文件和目录
-4. 设计可见性接口 — 确定哪些类型/函数是 pub/pub(crate) 还是私有
-5. 组织路径与 use — 配置 use 导入，确保不违反模块可见性规则
-6. 验证 — cargo check 确认编译通过，检查 IDE 模块导航正常
+Step 1. 确认项目类型 — 单 crate 包、多 crate 包还是工作空间
+Step 2. 选择命名约定 — 按项目用途确定二进制和库名称（snake_case）
+Step 3. 规划模块层次 — 从 lib.rs 开始按功能域拆分模块文件和目录
+Step 4. 设计可见性接口 — 确定哪些类型/函数是 pub/pub(crate) 还是私有
+Step 5. 组织路径与 use — 配置 use 导入，确保不违反模块可见性规则
+Step 6. 验证 — cargo check 确认编译通过，检查 IDE 模块导航正常
 
 
 ## Gotchas

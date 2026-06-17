@@ -240,12 +240,12 @@ fn main() -> ExitCode {
 
 ## Workflow
 
-1. 解析参数 — 使用 clap 定义 CLI 接口（参数、选项、子命令）
-2. 处理 I/O — 使用 stdin/stdout/stderr，支持管道模式
-3. 读写文件 — 使用 BufReader/BufWriter 高效处理文件
-4. 配置日志 — 使用 env_logger/tracing 输出运行日志
-5. 错误处理 — 使用 anyhow 包裹错误，提供友好的错误消息
-6. 测试验证 — 用 assert_cmd 测试 CLI 输出，用 assert_fs 测试文件操作
+Step 1. 解析参数 — 使用 clap 定义 CLI 接口（参数、选项、子命令）
+Step 2. 处理 I/O — 使用 stdin/stdout/stderr，支持管道模式
+Step 3. 读写文件 — 使用 BufReader/BufWriter 高效处理文件
+Step 4. 配置日志 — 使用 env_logger/tracing 输出运行日志
+Step 5. 错误处理 — 使用 anyhow 包裹错误，提供友好的错误消息
+Step 6. 测试验证 — 用 assert_cmd 测试 CLI 输出，用 assert_fs 测试文件操作
 
 
 ## Gotchas

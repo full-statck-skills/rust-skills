@@ -193,12 +193,12 @@ macro_rules! log_syntax {
 
 ## Workflow
 
-1. 确定宏类型 — 选择声明宏（macro_rules!）还是过程宏（derive/attribute/function-like）
-2. 编写宏 — 声明宏用匹配+替换；过程宏用 syn 解析 + quote 生成
-3. 测试宏展开 — cargo expand 或 trace_macros!() 检查展开结果
-4. 处理 hygiene — 使用 $crate 避免命名冲突
-5. 完善文档 — 为宏添加文档注释和 doctest 示例
-6. 发布 — 过程宏需独立 proc-macro crate，测试不同上下文的行为
+Step 1. 确定宏类型 — 选择声明宏（macro_rules!）还是过程宏（derive/attribute/function-like）
+Step 2. 编写宏 — 声明宏用匹配+替换；过程宏用 syn 解析 + quote 生成
+Step 3. 测试宏展开 — cargo expand 或 trace_macros!() 检查展开结果
+Step 4. 处理 hygiene — 使用 $crate 避免命名冲突
+Step 5. 完善文档 — 为宏添加文档注释和 doctest 示例
+Step 6. 发布 — 过程宏需独立 proc-macro crate，测试不同上下文的行为
 
 
 ## Gotchas

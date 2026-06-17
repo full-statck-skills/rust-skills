@@ -181,12 +181,12 @@ cargo llvm-cov --lcov --output-path lcov.info  # LCOV 格式
 
 ## Workflow
 
-1. 准备测试环境 — 确保 cargo test 可用，确认测试类型（单元/集成/文档）
-2. 编写单元测试 — 在 #[cfg(test)] 模块中编写 #[test] 函数
-3. 添加集成测试 — 在 tests/ 目录创建独立 crate 类型的测试文件
-4. 添加文档测试 — 在 /// 注释中嵌入可执行代码块
-5. 运行与调试 — cargo test，用 --nocapture 和 --test-threads 控制输出
-6. 覆盖率检查 — cargo llvm-cov 检查测试覆盖范围
+Step 1. 准备测试环境 — 确保 cargo test 可用，确认测试类型（单元/集成/文档）
+Step 2. 编写单元测试 — 在 #[cfg(test)] 模块中编写 #[test] 函数
+Step 3. 添加集成测试 — 在 tests/ 目录创建独立 crate 类型的测试文件
+Step 4. 添加文档测试 — 在 /// 注释中嵌入可执行代码块
+Step 5. 运行与调试 — cargo test，用 --nocapture 和 --test-threads 控制输出
+Step 6. 覆盖率检查 — cargo llvm-cov 检查测试覆盖范围
 
 
 ## Gotchas

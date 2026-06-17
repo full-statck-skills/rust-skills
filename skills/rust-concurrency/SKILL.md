@@ -183,12 +183,12 @@ unsafe impl Sync for MyType {}
 
 ## Workflow
 
-1. 确认并发模型 — 选择 OS 线程、async/await（Tokio）还是 scoped threads
-2. 数据共享设计 — 确定哪些数据需跨线程共享，选择 Arc/Mutex/Channel
-3. 处理同步 — 使用 Mutex/RwLock/Barrier/atomic 协调多线程访问
-4. 处理异步 — 选择 Tokio 运行时，使用 async fn + await + tokio::spawn
-5. 错误处理 — 处理 Mutex 中毒、JoinHandle 错误、channel 关闭场景
-6. 测试验证 — cargo test -- --test-threads=1 测试并发代码
+Step 1. 确认并发模型 — 选择 OS 线程、async/await（Tokio）还是 scoped threads
+Step 2. 数据共享设计 — 确定哪些数据需跨线程共享，选择 Arc/Mutex/Channel
+Step 3. 处理同步 — 使用 Mutex/RwLock/Barrier/atomic 协调多线程访问
+Step 4. 处理异步 — 选择 Tokio 运行时，使用 async fn + await + tokio::spawn
+Step 5. 错误处理 — 处理 Mutex 中毒、JoinHandle 错误、channel 关闭场景
+Step 6. 测试验证 — cargo test -- --test-threads=1 测试并发代码
 
 
 ## Gotchas

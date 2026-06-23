@@ -4,7 +4,7 @@
 
 **Rust 语言技能 — 1.93、并发、测试、Web、嵌入式、CLI、宏、代码审查**
 
-[![GitHub](https://img.shields.io/badge/github-full--statck--skills%2Frust-skills-green.svg)](https://github.com/full-statck-skills/rust-skills)
+[![GitHub](https://img.shields.io/badge/github-full--stack--skills%2Frust-skills-green.svg)](https://github.com/full-stack-skills/rust-skills)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 [![Agent Skills](https://img.shields.io/badge/Agent%20Skills-兼容-purple.svg)](https://agentskills.io)
 
@@ -25,10 +25,10 @@
 ## 📦 安装
 
 ```bash
-npx skills add full-statck-skills/rust-skills
+npx skills add full-stack-skills/rust-skills
 ```
 
-或安装特定技能：`npx skills add full-statck-skills/rust-skills --skill <skill-name>`
+或安装特定技能：`npx skills add full-stack-skills/rust-skills --skill <skill-name>`
 
 ## 🎯 技能列表 (12) 按层级
 
@@ -110,13 +110,13 @@ rust-skills/
 **方式 1：npx skills CLI（推荐）**
 
 ```bash
-npx skills add full-statck-skills/rust-skills
+npx skills add full-stack-skills/rust-skills
 ```
 
 **方式 2：手动安装**
 
 ```bash
-git clone https://github.com/full-statck-skills/rust-skills.git
+git clone https://github.com/full-stack-skills/rust-skills.git
 cp -r rust-skills/skills/* .claude/skills/
 ```
 
@@ -127,7 +127,7 @@ cp -r rust-skills/skills/* .claude/skills/
 | 资源 | 链接 |
 |------|------|
 | **Full Stack Skills** | [github.com/partme-ai/full-stack-skills](https://github.com/partme-ai/full-stack-skills) |
-| **所有技能组** | [github.com/full-statck-skills](https://github.com/full-statck-skills) |
+| **所有技能组** | [github.com/full-stack-skills](https://github.com/full-stack-skills) |
 | **Agent Skills 规范** | [agentskills.io](https://agentskills.io) |
 | **Skills CLI** | [github.com/vercel-labs/skills](https://github.com/vercel-labs/skills) |
 

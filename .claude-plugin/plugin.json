@@ -6,8 +6,8 @@
     "name": "PartMeAI",
     "email": "partmeai@gmail.com"
   },
-  "homepage": "https://github.com/full-statck-skills/rust-skills",
-  "repository": "https://github.com/full-statck-skills/rust-skills",
+  "homepage": "https://github.com/full-stack-skills/rust-skills",
+  "repository": "https://github.com/full-stack-skills/rust-skills",
   "source": "./",
   "skills": [
     "./skills/rust-1.93",
